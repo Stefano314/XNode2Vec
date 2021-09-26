@@ -1,4 +1,4 @@
-import XNode2Vec as fn2v
+import Xnode2vec as xn2v
 import matplotlib.pyplot as plt
 import matplotlib.colors as col
 import numpy as np
@@ -52,13 +52,14 @@ families = []
 # k=0
 # labels = ['Chr1','Chr6','ChrX','Chr10','Chr20']
 # for node_id in [3,252,430,585,716]:
-#     plt.hist(Families( fn2v.n2v_algorithm(G, node_id, picked = 700, Weight = True, dim = 80, walk_length = walk_l, context = 5, p = p,
+#     plt.hist(Families( xn2v.n2v_algorithm(G, node_id, picked = 700, Weight = True, dim = 80, walk_length = walk_l, context = 5, p = p,
 #                            q = q, workers = 4, train_time = 5), 0.56),bins=np.linspace(0, 777, 770),label = labels[k])
 #     k += 1
 # ============================================================================
 
 for node_id in range(0,55,2):
-    families.append(Families(fn2v.n2v_algorithm(G,node_id,picked=700,Weight=True,dim=80,walk_length=walk_l,context=5,p=p,q=q,workers=4,train_time=5),
+
+	families.append(Families(xn2v.n2v_algorithm(G,node_id,picked=700,Weight=True,dim=80,walk_length=walk_l,context=5,p=p,q=q,workers=4,train_time=5),
                              0.4))
 X = [item for sublist in families for item in sublist]
 plt.hist(families, bins=90)
