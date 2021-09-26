@@ -2,7 +2,7 @@ from fastnode2vec import Node2Vec, Graph
 import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
-    
+
 def n2v_algorithm(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs):
     """
     Description
@@ -25,6 +25,8 @@ def n2v_algorithm(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs)
     node : int, optional
         Sets the node from which to start the analysis. This is a gensim.models.word2vec parameter.
         The default value is '1'.
+    walk_length : int
+        Sets the number of jumps to perform from node to node.
     picked : int, optional
         Sets the first 'picked' nodes that are most similar to the node identified with 'node'. This is a
         gensim.models.word2vec parameter.
@@ -37,6 +39,17 @@ def n2v_algorithm(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs)
         Specifies if the algorithm must also consider the weights of the links. If the networks is unweighted this
         parameter must be 'False', otherwise it receives too many parameters to unpack.
         The default value is 'False'.
+    dim : int, optional
+        This is the Word2Vec "size" argument. It sets the dimension of the algorithm word vector. The longer it is, the
+        more complex is the specification of the word -- object. If a subject has few features, the word length should
+        be relatively short.
+        The default value is '128'.
+    context : int, optional
+        This is the Word2Vec "window" parameter. It sets the number of words BEFORE and AFTER the current one that will
+        be kept for the analysis. Depending on its value, it manages to obtain words that are interchangeable and
+        relatable -- belonging to the same topic. If the value is small, 2-15, then we will likely have interchangeable
+        words, while if it is large, >15, we will have relatable words.
+        The default value is '10'
     Returns
     -------
     output : ndarray, ndarray
@@ -45,20 +58,19 @@ def n2v_algorithm(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs)
 
     Notes
     -----
-    - The node parameter is by default an integer. However, this only depends on the node labels that are given to the nodes in the network.
-    - The rest of the parameters in **kwargs are the ones in fastnode2vec.Node2Vec constructor, I only specified what I considered.
+    - The node parameter is by default an integer. However, this only depends on the node labels that are given to the
+      nodes in the network.
+    - The rest of the parameters in **kwargs are the ones in fastnode2vec.Node2Vec constructor, I only specified what I
+      considered to be the most important ones.
     - I noticed that the walk_length parameter should be at least #Nodes/2 in order to be a solid walk.
-    the most relevant q and p.
-    
+
     Examples
     --------
     >>> G = nx.generators.balanced_tree(r=3, h=4)
-    >>> nodes, similarity = n2v_algorithm(G, dim=128, walk_length=30, 
-                                          context=100, p=0.1, q=0.9, workers=4)
+    >>> nodes, similarity = n2v_algorithm(G, dim=128, walk_length=30, context=10, p=0.1, q=0.9, workers=4)
         nodes: [0 4 5 6 45 40 14 43 13 64]
-        similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 
-                     0.64997339 0.64365959 0.64236712 0.63170493 0.63144475]
-    
+        similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 0.64997339 0.64365959 0.64236712 
+        0.63170493 0.63144475]
     """
     if Weight == False:
         G_fn2v = Graph(G.edges(), directed = False, weighted = Weight)
@@ -77,8 +89,8 @@ def Draw(G, nodes_result, title = 'Community Network', **kwargs):
     """
         Description
         -----------
-        Draws a networkx plot highlighting some specific nodes in that network. The last node is higlighted in red, the remaining nodes
-        in "nodes_result" are in blue, while the rest of the network is green.
+        Draws a networkx plot highlighting some specific nodes in that network. The last node is higlighted in red, the
+        remaining nodes in "nodes_result" are in blue, while the rest of the network is green.
 
         Parameters
         ----------
@@ -91,7 +103,8 @@ def Draw(G, nodes_result, title = 'Community Network', **kwargs):
 
         Notes
         -----
-        - This function returns a networkx draw plot, which is good only for networks with few nodes (~40). For larger networks I suggest to use other visualization methods, like Gephi.
+        - This function returns a networkx draw plot, which is good only for networks with few nodes (~40). For larger
+          networks I suggest to use other visualization methods, like Gephi.
 
         Examples
         --------
