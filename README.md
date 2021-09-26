@@ -16,6 +16,6 @@ Most Similar Nodes Distribution, E-R
 ------------------------------------
 ![E-R_Nodes](https://user-images.githubusercontent.com/79590448/132143507-94807c17-4656-44b0-bac1-6af945d50fbf.png)
 
-Comunity Network
-----------------
+Community Network
+-----------------
 ![Families](https://user-images.githubusercontent.com/79590448/133808870-0c045f12-60d5-49d2-971f-e39c16aa1852.png)
