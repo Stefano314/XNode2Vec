@@ -3,6 +3,14 @@ Description
 -----------
 This repository is meant to show the strength of Node2Vec prediction algorithm and to apply it to very different types of networks. In addition, the original [Node2Vec](https://github.com/aditya-grover/node2vec) algorithm was replaced with an extremely faster version, called [FastNode2Vec](https://github.com/louisabraham/fastnode2vec). The application of the algorithm is provided by a function that works with **networkx** objects, that are quite user-friendly.
 
+Installation
+------------
+In order to install the Xnode2vec package simply use pip:
+
+- pip install Xnode2vec
+
+*If there are some problems with the installation, please read the "Note" below.*
+
 Note
 -----------
 9/17/2021: I had some issues when installing the fastnode2vec package; in particular, the example given by Louis Abraham gives an error. I noticed that after the installation, the declaration of the file "node2vec.py" wasn't the same as the latest version available on its GitHub (at the moment). My brutal solution was simply to just copy the whole content into the node2vec.py file. This solves the problem.
