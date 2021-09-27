@@ -31,6 +31,9 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
         Sets the number of jumps to perform from node to node.
     save_model : bool, optional
         Saves in the working directory a .wordvectors file that contains the performed training.
+        It's important to consider is that the **methods** of the "Word2Vec" model saved can be accessed
+        as "model_name.wv". The documentation of ".wv" is found however under 
+        "gensim.models.keyedvectors.KeyedVectors" istance; they are the same thing, ".wv" is just a rename.
         The default value is 'False'.
     picked : int, optional
         Sets the first 'picked' nodes that are most similar to the node identified with 'node'. This is a
@@ -50,7 +53,7 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
         be relatively short.
         The default value is '128'.
     context : int, optional
-        This is the Word2Vec "window" parameter. It sets the number of words BEFORE and AFTER the current one that will
+        This is the Word2Vec "window" parameter. It sets the number of words **before** and **after** the current one that will
         be kept for the analysis. Depending on its value, it manages to obtain words that are interchangeable and
         relatable -- belonging to the same topic. If the value is small, 2-15, then we will likely have interchangeable
         words, while if it is large, >15, we will have relatable words.
@@ -68,14 +71,15 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
     - The rest of the parameters in **kwargs are the ones in fastnode2vec.Node2Vec constructor, I only specified what I
       considered to be the most important ones.
     - I noticed that the walk_length parameter should be at least #Nodes/2 in order to be a solid walk.
-
+    
     Examples
     --------
     >>> G = nx.generators.balanced_tree(r=3, h=4)
-    >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=10, p=0.1, q=0.9, workers=4)
+    >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=10, 
+    >>>                                   p=0.1, q=0.9, workers=4)
         nodes: [0 4 5 6 45 40 14 43 13 64]
-        similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 0.64997339 0.64365959 0.64236712 
-        0.63170493 0.63144475]
+        similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 0.64997339 
+                     0.64365959 0.64236712 0.63170493 0.63144475]
     """
     if Weight == False:
         G_fn2v = Graph(G.edges(), directed = False, weighted = Weight)
@@ -97,8 +101,9 @@ def Load(file):
 
     Parameters
     ----------
-    file : .wordvectors file name.
-        Gives the Word2Vec model to load.
+    file : .wordvectors
+        Gives file name of the saved word2vec model to load a "gensim.models.keyedvectors.KeyedVectors"
+        object.
 
     Returns
     -------
@@ -107,8 +112,12 @@ def Load(file):
         
     Note
     ----
-    I put this function just to compress everything useful for an analysis, without having to
-    call the gensim method.
+    - I put this function just to compress everything useful for an analysis, without having to 
+      call the gensim method.
+    
+    - It's important to consider is that the **methods** of the "Word2Vec" model saved can be accessed as "model_name.wv". 
+      The documentation of ".wv" is found however under "gensim.models.keyedvectors.KeyedVectors" istance; 
+      they are the same thing, ".wv" is just a rename.
 
     """
     model = Word2Vec.load(file)
@@ -138,7 +147,8 @@ def Draw(G, nodes_result, title = 'Community Network', **kwargs):
         Examples
         --------
         >>> G = nx.generators.balanced_tree(r=3, h=4)
-        >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=100, p=0.1, q=0.9, workers=4)
+        >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=100, 
+        >>>                                   p=0.1, q=0.9, workers=4)
         >>> red_node = 2
         >>> nodes = np.append(nodes, red_node)
         >>> Draw(G, nodes)
