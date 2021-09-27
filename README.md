@@ -20,3 +20,7 @@ Community Network
 -----------------
 ![Com_class](https://user-images.githubusercontent.com/79590448/134899866-713d943d-0159-40af-bda5-9297195d4596.png)
 
+Hi-C Translocation Detection
+----------------------------
+![Sim3_2](https://user-images.githubusercontent.com/79590448/134982724-307334c8-74c8-48af-b6a8-88f0547fc40a.png)
+
