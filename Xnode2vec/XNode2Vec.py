@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 
-def n2v_algorithm(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs):
+def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs):
     """
     Description
     -----------
@@ -67,7 +67,7 @@ def n2v_algorithm(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs)
     Examples
     --------
     >>> G = nx.generators.balanced_tree(r=3, h=4)
-    >>> nodes, similarity = n2v_algorithm(G, dim=128, walk_length=30, context=10, p=0.1, q=0.9, workers=4)
+    >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=10, p=0.1, q=0.9, workers=4)
         nodes: [0 4 5 6 45 40 14 43 13 64]
         similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 0.64997339 0.64365959 0.64236712 
         0.63170493 0.63144475]
@@ -109,7 +109,7 @@ def Draw(G, nodes_result, title = 'Community Network', **kwargs):
         Examples
         --------
         >>> G = nx.generators.balanced_tree(r=3, h=4)
-        >>> nodes, similarity = n2v_algorithm(G, dim=128, walk_length=30, context=100, p=0.1, q=0.9, workers=4)
+        >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=100, p=0.1, q=0.9, workers=4)
         >>> red_node = 2
         >>> nodes = np.append(nodes, red_node)
         >>> Draw(G, nodes)
