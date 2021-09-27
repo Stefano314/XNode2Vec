@@ -1,9 +1,11 @@
 from fastnode2vec import Node2Vec, Graph
+from gensim.models import Word2Vec
 import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 
-def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs):
+def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_model = False, 
+                  model_name = 'model.wordvectors' , **kwargs):
     """
     Description
     -----------
@@ -27,6 +29,9 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs)
         The default value is '1'.
     walk_length : int
         Sets the number of jumps to perform from node to node.
+    save_model : bool, optional
+        Saves in the working directory a .wordvectors file that contains the performed training.
+        The default value is 'False'.
     picked : int, optional
         Sets the first 'picked' nodes that are most similar to the node identified with 'node'. This is a
         gensim.models.word2vec parameter.
@@ -78,12 +83,36 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, **kwargs)
         G_fn2v = Graph(list(G.edges.data("weight", default = 1)), directed = False, weighted = Weight)
     n2v = Node2Vec(G_fn2v, **kwargs)
     n2v.train(epochs=train_time)
+    if save_model == True:
+        n2v.save(model_name)
     nodes = n2v.wv.most_similar(node, topn = picked)
     nodes_id = list(list(zip(*nodes))[0])
     similarity = list(list(zip(*nodes))[1])
     nodes_id = np.array(nodes_id)
     similarity = np.array(similarity)
     return nodes_id, similarity
+    
+def Load(file):
+    """
+
+    Parameters
+    ----------
+    file : .wordvectors file name.
+        Gives the Word2Vec model to load.
+
+    Returns
+    -------
+    model : Word2Vec object.
+        This is the previously saved model.
+        
+    Note
+    ----
+    I put this function just to compress everything useful for an analysis, without having to
+    call the gensim method.
+
+    """
+    model = Word2Vec.load(file)
+    return model
 
 def Draw(G, nodes_result, title = 'Community Network', **kwargs):
     """
