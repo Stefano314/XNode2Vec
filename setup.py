@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Xnode2vec",
-    version="0.0.4.1",
+    version="0.0.4.2",
     author="Stefano Bianchi",
     author_email="stefanobianchi314@gmail.com",
     description="Implementation of fastnode2vec algorithm for networkx objects.",
@@ -16,9 +16,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
-    #package_dir={"": "src"},
     packages=["Xnode2vec"],
-    #py_modules=["Xnode2Vec","Xnode2vec.XNode2Vec"],
-    #packages=setuptools.find_packages(where="src"),
+    install_requires=["fastnode2vec],
     python_requires=">=3.6",
 )
