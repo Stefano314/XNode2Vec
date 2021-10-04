@@ -42,6 +42,13 @@ G.add_weighted_edges_from(a) # Feed the graph with the edge list
 
 nodes, similarity = similar_nodes(G, dim=128, walk_length=20, context=5, p=0.1, q=0.9, workers=4)
 ```
+Objects Syntax
+--------------
+Here we report the list of structures required to use the Xnode2vec package:
+- Dataset: ``` dataset = np.array([[1,2,3,..], ..., [1,2,3,..]])```; the rows corresponds to each point, while the coulumns to the coordinates.
+- Edge List: ``` edgelist = [(node_a,node_b,weight), ... , (node_c,node_d,weight)] ```; this is a list of tuples, structured as [starting_node, arriving_node, weight]
+- DataFrame: ``` pandas.DataFrame(np.array([[1, 2, 3.7], [1, 3, 0.33], [2, 7, 12]]), columns=['node1', 'node2', 'weight']) ```
+
 Note
 ----
 9/17/2021: I had some issues when installing the fastnode2vec package; in particular, the example given by Louis Abraham gives an error. I noticed that after the installation, the declaration of the file "node2vec.py" wasn't the same as the latest version available on its GitHub (at the moment). My brutal solution was simply to just copy the whole content into the node2vec.py file. This solves the problem.
