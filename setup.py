@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Xnode2vec",
-    version="0.0.5",
+    version="0.0.5.1",
     author="Stefano Bianchi",
     author_email="stefanobianchi314@gmail.com",
     description="Alternative method for data clustering using Node2Vec algorithm.",
@@ -17,6 +17,6 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     packages=["Xnode2vec"],
-    install_requires=["fastnode2vec","scipy","skspatial","pandas"],
+    install_requires=["fastnode2vec","scipy","scikit-spatial","pandas"],
     python_requires=">=3.6",
 )
