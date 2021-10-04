@@ -8,6 +8,46 @@ import networkx as nx
 from skspatial.objects import Line
 from scipy.spatial import distance
 
+def generate_edgelist(df):
+    """
+    Description
+    -----------
+    Read a pandas DataFrame and generates an edge list vector to eventually build a networkx graph. The syntax of the
+    file header is rigidly controlled and can't be changed. The header format must be: (node1, node2, weight).
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Pandas DataFrame edge list of the wanted network.
+
+    Returns
+    -------
+    output : list
+        The output of the function is a list of tuples of the form (node_1, node_2, weight).
+
+    Note
+    ----
+    - In order to generate a **networkx** object it's only required to give the list to the Graph() constructor
+    >>> edgelist = generate_edgelist(DataFrame)
+    >>> G = nx.Graph()
+    >>> G.add_weighted_edges_from(edgelist)
+    - The data types of the 'node1' and 'node2' columns must be strings, otherwise they will be converted as strings.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame(np.array([[1, 2, 3.7], [1, 3, 0.33], [2, 7, 12]]), columns=['node1', 'node2', 'weight'])
+    >>> edgelist = generate_edgelist(df)
+        [('1.0', '2.0', 3.7), ('1.0', '3.0', 0.33), ('2.0', '7.0', 12.0)]
+    """
+    # forcing type values
+    df = df.astype({'node1': str, 'node2': str, 'weight': np.float64})
+    # check header:
+    header_names = list(df.columns.values)
+    if header_names[0] != 'node1' or header_names[1] != 'node2' or header_names[2] != 'weight':
+        raise TypeError('The header format is different from the required one.')
+    return list(df.itertuples(index = False, name = None))
+
 def edgelist_from_csv(path, **kwargs):
     """
     Description
@@ -32,7 +72,8 @@ def edgelist_from_csv(path, **kwargs):
     >>> edgelist = get_edgelist('some_edgelist.csv')
     >>> G = nx.Graph()
     >>> G.add_weighted_edges_from(edgelist)
-
+    - The data types of the 'node1' and 'node2' columns must be strings, otherwise they will be converted as strings.
+    
     Examples
     --------
     >>> edgelist = edgelist_from_csv('somefile.csv')
