@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.5",
     author="Stefano Bianchi",
     author_email="stefanobianchi314@gmail.com",
-    description="Implementation of fastnode2vec algorithm for networkx objects.",
+    description="Alternative method for data clustering using Node2Vec algorithm.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Stefano314/XNode2Vec",
