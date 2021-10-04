@@ -3,6 +3,209 @@ from gensim.models import Word2Vec
 import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
+import pandas as pd
+import networkx as nx
+from skspatial.objects import Line
+from scipy.spatial import distance
+
+def edgelist_from_csv(path, **kwargs):
+    """
+    Description
+    -----------
+    Read a .csv file using pandas dataframes and generates an edge list vector to eventually build a networkx graph.
+    The syntax of the file header is rigidly controlled and can't be changed.
+
+    Parameters
+    ----------
+    path : string
+        Path or name of the .csv file to be loaded.
+    **kwargs :  pandas.read_csv() arguments
+
+    Returns
+    -------
+    output : list
+        The output of the function is a list of tuples of the form (node_1, node_2, weight).
+
+    Note
+    ----
+    - In order to generate a **networkx** object it's only required to give the list to the Graph() constructor
+    >>> edgelist = get_edgelist('some_edgelist.csv')
+    >>> G = nx.Graph()
+    >>> G.add_weighted_edges_from(edgelist)
+
+    Examples
+    --------
+    >>> edgelist = edgelist_from_csv('somefile.csv')
+        [('a','1',3.4),('a','2',0.6),('a','b',10)]
+    """
+    df_csv = pd.read_csv(path, dtype = {'node1': str, 'node2': str, 'weight': np.float64}, **kwargs)
+    # check header:
+    header_names = list(df_csv.columns.values)
+    if header_names[0] != 'node1' or header_names[1] != 'node2' or header_names[2] != 'weight':
+        raise TypeError('The header format is different from the required one.')
+    return list(df_csv.itertuples(index = False, name = None))
+
+def complete_edgelist(Z, info=False, **kwargs):
+    """
+        Description
+        -----------
+        This function performs a **data transformation** from the space points to a network. It generates links between
+        specific points and gives them weights according to other conditions.
+
+        Parameters
+        ----------
+        Z : numpy ndarray
+            Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
+            are the coordinates.
+        info :  bool
+            Flag to print out some generic information of the dataset.
+
+        Returns
+        -------
+        output : pandas DataFrame
+            Edge list created from the given dataset expressed as a Pandas DataFrame.
+
+        Examples
+        --------
+        >>> x1 = np.random.normal(7, 1, 3)
+        >>> y1 = np.random.normal(9, 1, 3)
+        >>> points = np.column_stack((x1, y1))
+        >>> df = complete_edgelist(points)
+              node1 node2    weight
+            0     0     0  0.000000
+            1     0     1  1.358972
+            2     0     2  2.393888
+            3     1     0  1.358972
+            4     1     1  0.000000
+            5     1     2  1.345274
+            6     2     0  2.393888
+            7     2     1  1.345274
+            8     2     2  0.000000
+    """
+    dimension = Z[0].size  # Number of coordinates per point
+    NPoints = Z[:, 0].size  # Number of points
+    weights = distance.cdist(Z, Z, 'euclidean') # Distance between all points
+    df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
+    l = 0
+    for i in range(0, NPoints):
+        for j in range(0, NPoints):
+            df.loc[l] = [f"{i}", f"{j}", weights[i][j]]
+            l+=1
+    if info == True:
+        print('\033[1m' + '--------- General Information ---------')
+        print('Edge list of a fully connected network.')
+        print('The weights are calculated using the euclidean norm.\n')
+        print('- Space dimensionality: ', dimension)
+        print('- Number of Points: ', NPoints)
+        print('- Minimum weight: ', np.min(weights))
+        print('- Maximum weight: ', np.max(weights))
+        print('- Average weight: ', np.mean(weights))
+        print('- Weight Variance: ', np.var(weights))
+    return df
+
+def stellar_edgelist(Z, info=False, **kwargs):
+    """
+    Description
+    -----------
+    This function performs a **data transformation** from the space points to a network. It generates links between
+    specific points and gives them weights according to other conditions.
+
+    Parameters
+    ----------
+    Z : numpy ndarray
+        Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
+        are the coordinates.
+    info :  bool
+        Flag to print out some generic information of the dataset.
+
+    Returns
+    -------
+    output : pandas DataFrame
+        Edge list created from the given dataset expressed as a Pandas DataFrame.
+
+    Examples
+    --------
+    >>> x1 = np.random.normal(7, 1, 6)
+    >>> y1 = np.random.normal(9, 1, 6)
+    >>> points_1 = np.column_stack((x1, y1))
+    >>> df = stellar_edgelist(points_1)
+          node1 node2     weight
+        0     0     1  12.571278
+        1     0     2  11.765633
+        2     0     3   9.735974
+        3     0     4  12.181443
+        4     0     5  11.027584
+        5     0     6  12.755861
+
+    >>> x2 = np.random.normal(107, 2, 3)
+    >>> y2 = np.random.normal(101, 1, 3)
+    >>> points_2 = np.column_stack((x2, y2))
+    >>> tot = np.concatenate((points_1,points_2),axis=0)
+    >>> df = stellar_edgelist(tot)
+          node1 node2     weight
+        0     0     1  12.571278
+        1     0     2  11.765633
+        2     0     3   9.735974
+        3     0     4  12.181443
+        4     0     5  11.027584
+        5     0     6  12.755861
+        6     0     7  146.229997
+        7     0     8  146.952899
+        8     0     9  146.595700
+    """
+    dimension = Z[0].size # Number of coordinates per point
+    NPoints = Z[:,0].size # Number of points
+    weights = np.linalg.norm(Z, axis = 1)
+    df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
+    for i in range(0,NPoints):
+        df.loc[i] = ['0',f"{i+1}",weights[i]]
+    if info == True:
+        print('\033[1m'+'--------- General Information ---------')
+        print('Edge list of a stellar network.')
+        print('The weights are calculated using the euclidean norm.\n')
+        print('- Space dimensionality: ', dimension)
+        print('- Number of Points: ', NPoints)
+        print('- Minimum weight: ', np.min(weights))
+        print('- Maximum weight: ', np.max(weights))
+        print('- Average weight: ', np.mean(weights))
+        print('- Weight Variance: ', np.var(weights))
+    return df
+
+def best_line_projection(Z):
+    """
+    Description
+    -----------
+    Performs a linear best fit of the dataset points and projects them on the line itself.
+
+    Parameters
+    ----------
+    Z : numpy ndarray
+        Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
+        are the coordinates.
+
+    Returns
+    -------
+    output : numpy ndarray
+        The output of the function is a numpy ndarray containing the transformed points of the dataset.
+
+    Examples
+    --------
+    >>> x1 = np.random.normal(7, 1, 6)
+    >>> y1 = np.random.normal(9, 1, 6)
+    >>> points = np.column_stack((x1, y1))
+    >>> best_line_projection(points)
+        [[-0.15079291  1.12774076]
+         [ 2.65759595  4.44293266]
+         [ 3.49319696  5.42932658]]
+    """
+    a = Line.best_fit(Z)
+    NPoints = Z[:, 0].size
+    dimension = Z[0].size
+    projections = []
+    for i in range(0,NPoints):
+        projections.extend(np.array(a.project_point(Z[i])))
+    projections = np.reshape(projections, (NPoints, dimension))
+    return projections
 
 def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_model = False, 
                   model_name = 'model.wordvectors' , **kwargs):
@@ -98,7 +301,6 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
     
 def Load(file):
     """
-
     Parameters
     ----------
     file : .wordvectors
@@ -152,7 +354,7 @@ def Draw(G, nodes_result, title = 'Community Network', **kwargs):
         >>> red_node = 2
         >>> nodes = np.append(nodes, red_node)
         >>> Draw(G, nodes)
-        """
+    """
     color_map = []
     for node in G:
         if node == int(nodes_result[-1]):
