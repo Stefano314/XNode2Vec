@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Xnode2vec",
-    version="0.0.4.2",
+    version="0.0.5",
     author="Stefano Bianchi",
     author_email="stefanobianchi314@gmail.com",
     description="Implementation of fastnode2vec algorithm for networkx objects.",
