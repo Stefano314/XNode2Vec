@@ -301,9 +301,7 @@ def recover_points(Z, G, nodes):
         """
     # check dimensionality
     if Z[:,0].size != np.array(G.nodes).size:
-        print('dataset: ',Z[:,0].size)
-        print('network: ', np.array(G.nodes).size)
-        raise Exception('Error: the dataset dimension is different from the one of the network.')
+        raise Exception(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one of the network dim={np.array(G.nodes).size}.")
     # force string type
     nodes = [str(s) for s in nodes]
     picked_nodes = []
