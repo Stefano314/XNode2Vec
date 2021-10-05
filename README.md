@@ -49,7 +49,7 @@ Objects Syntax
 Here we report the list of structures required to use the Xnode2vec package:
 - Dataset: ``` dataset = np.array([[1,2,3,..], ..., [1,2,3,..]])```; the rows corresponds to each point, while the coulumns to the coordinates.
 - Edge List: ``` edgelist = [(node_a,node_b,weight), ... , (node_c,node_d,weight)] ```; this is a list of tuples, structured as [starting_node, arriving_node, weight]
-- DataFrame: ``` pandas.DataFrame(np.array([[1, 2, 3.7], [1, 3, 0.33], [2, 7, 12]]), columns=['node1', 'node2', 'weight']) ```
+- DataFrame: ``` pandas.DataFrame(np.array([[1, 2, 3.7], ..., [2, 7, 12]]), columns=['node1', 'node2', 'weight']) ```
 
 Note
 ----
