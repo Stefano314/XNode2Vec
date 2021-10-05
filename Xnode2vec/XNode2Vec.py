@@ -7,6 +7,7 @@ import pandas as pd
 import networkx as nx
 from skspatial.objects import Line
 from scipy.spatial import distance
+from tqdm import tqdm
 
 def generate_edgelist(df):
     """
@@ -87,7 +88,6 @@ def edgelist_from_csv(path, **kwargs):
         raise TypeError('The header format is different from the required one.')
     return list(df_csv.itertuples(index = False, name = None))
 
-
 def complete_edgelist(Z, info=False, **kwargs):
     """
         Description
@@ -130,14 +130,19 @@ def complete_edgelist(Z, info=False, **kwargs):
     weights = distance.cdist(Z, Z, 'euclidean')  # Distance between all points
     df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
     l = 0
-    for i in range(0, NPoints):
-        for j in range(0, NPoints):
-            df.loc[l] = [f"{i}", f"{j}", np.exp(-weights[i][j])]
-            l += 1
-    if info == True:
+    if info == False:
+        for i in range(0, NPoints):
+            for j in range(0, NPoints):
+                df.loc[l] = [f"{i}", f"{j}", np.exp(-weights[i][j])]
+                l += 1
+    elif info == True:
+        for i in tqdm(range(0, NPoints), desc='Generating Complete Network'):
+            for j in range(0, NPoints):
+                df.loc[l] = [f"{i}", f"{j}", np.exp(-weights[i][j])]
+                l += 1
         print('\033[1m' + '--------- General Information ---------')
         print('Edge list of a fully connected network.')
-        print('The weights are calculated using the euclidean norm.\n')
+        print('The weights are calculated using minus the exponential of the euclidean norm.\n')
         print('- Space dimensionality: ', dimension)
         print('- Number of Points: ', NPoints)
         print('- Minimum weight: ', np.min(weights))
@@ -145,7 +150,6 @@ def complete_edgelist(Z, info=False, **kwargs):
         print('- Average weight: ', np.mean(weights))
         print('- Weight Variance: ', np.var(weights))
     return df
-
 
 def stellar_edgelist(Z, info=False, **kwargs):
     """
@@ -200,12 +204,15 @@ def stellar_edgelist(Z, info=False, **kwargs):
     NPoints = Z[:, 0].size  # Number of points
     weights = np.linalg.norm(Z, axis = 1)
     df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
-    for i in range(0, NPoints):
-        df.loc[i] = ['origin', f"{i + 1}", weights[i]]
-    if info == True:
+    if info == False:
+        for i in range(0, NPoints):
+            df.loc[i] = ['origin', f"{i + 1}", np.exp(-weights[i])]
+    elif info == True:
+        for i in tqdm(range(0, NPoints), desc='Generating Stellar Network'):
+            df.loc[i] = ['origin', f"{i + 1}", np.exp(-weights[i])]
         print('\033[1m' + '--------- General Information ---------')
         print('Edge list of a stellar network.')
-        print('The weights are calculated using the euclidean norm.\n')
+        print('The weights are calculated using minus the exponential of the euclidean norm.\n')
         print('- Space dimensionality: ', dimension)
         print('- Number of Points: ', NPoints)
         print('- Minimum weight: ', np.min(weights))
@@ -213,7 +220,6 @@ def stellar_edgelist(Z, info=False, **kwargs):
         print('- Average weight: ', np.mean(weights))
         print('- Weight Variance: ', np.var(weights))
     return df
-
 
 def best_line_projection(Z):
     """
@@ -282,12 +288,12 @@ def recover_points(Z, G, nodes):
         >>> family1 = np.column_stack((x1, y1)) # REQUIRED ARRAY FORMAT
         >>> family2 = np.column_stack((x2, y2)) # REQUIRED ARRAY FORMAT
         >>> dataset = np.concatenate((family1,family2),axis=0) # Generic dataset
-        >>> df = xn2v.complete_edgelist(dataset) # Pandas edge list generation
-        >>> df = xn2v.generate_edgelist(df)
+        >>> df = complete_edgelist(dataset) # Pandas edge list generation
+        >>> df = generate_edgelist(df)
         >>> G = nx.Graph()
         >>> G.add_weighted_edges_from(df)
         >>> nodes, similarity = xn2v.similar_nodes(G,node='1',picked=10,walk_length=20,dim=100,context=5,Weight=True)
-        >>> cluseter = xn2v.recover_points(dataset,G,nodes)
+        >>> cluseter = recover_points(dataset,G,nodes)
         [[17.98575878  8.99318017]
          [18.03438744  9.46128979]
          [15.83803679 10.39565391]
@@ -297,11 +303,15 @@ def recover_points(Z, G, nodes):
          [16.30640697 12.15702448]
          [18.73718742 13.99351914]
          [18.7817838   7.92318885]
-         [16.15456589 10.72636297]]       
+         [16.15456589 10.72636297]]
         """
     # check dimensionality
-    if Z[:,0].size != np.array(G.nodes).size:
-        raise Exception(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one of the network dim={np.array(G.nodes).size}.")
+    if np.array(G.nodes)[0] == 'origin':
+        if Z[:,0].size+1 != np.array(G.nodes).size:
+            raise Exception(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one expected for the network dim={np.array(G.nodes).size}.")
+        else: Z = np.insert(Z, 0, np.zeros(Z[0].size), axis=0) # Adding origin
+    elif Z[:,0].size != np.array(G.nodes).size:
+            raise Exception(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one of the network dim={np.array(G.nodes).size}.")
     # force string type
     nodes = [str(s) for s in nodes]
     picked_nodes = []
