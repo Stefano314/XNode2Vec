@@ -28,7 +28,7 @@ def generate_edgelist(df):
     Note
     ----
     - In order to generate a **networkx** object it's only required to give the list to the Graph() constructor
-    >>> edgelist = xn2v.generate_edgelist(DataFrame)
+    >>> edgelist = generate_edgelist(DataFrame)
     >>> G = nx.Graph()
     >>> G.add_weighted_edges_from(edgelist)
     - The data types of the 'node1' and 'node2' columns must be strings, otherwise they will be converted as strings.
@@ -37,16 +37,17 @@ def generate_edgelist(df):
     --------
     >>> import pandas as pd
     >>> df = pd.DataFrame(np.array([[1, 2, 3.7], [1, 3, 0.33], [2, 7, 12]]), columns=['node1', 'node2', 'weight'])
-    >>> edgelist = xn2v.generate_edgelist(df)
+    >>> edgelist = generate_edgelist(df)
         [('1.0', '2.0', 3.7), ('1.0', '3.0', 0.33), ('2.0', '7.0', 12.0)]
     """
-    # forcing type values
-    df = df.astype({'node1': str, 'node2': str, 'weight': np.float64})
     # check header:
     header_names = list(df.columns.values)
     if header_names[0] != 'node1' or header_names[1] != 'node2' or header_names[2] != 'weight':
         raise TypeError('The header format is different from the required one.')
+    # forcing type values
+    df = df.astype({'node1': str, 'node2': str, 'weight': np.float64})
     return list(df.itertuples(index = False, name = None))
+
 
 def edgelist_from_csv(path, **kwargs):
     """
@@ -69,14 +70,14 @@ def edgelist_from_csv(path, **kwargs):
     Note
     ----
     - In order to generate a **networkx** object it's only required to give the list to the Graph() constructor
-    >>> edgelist = xn2v.edgelist_from_csv('some_edgelist.csv')
+    >>> edgelist = get_edgelist('some_edgelist.csv')
     >>> G = nx.Graph()
     >>> G.add_weighted_edges_from(edgelist)
     - The data types of the 'node1' and 'node2' columns must be strings, otherwise they will be converted as strings.
-    
+
     Examples
     --------
-    >>> edgelist = xn2v.edgelist_from_csv('somefile.csv')
+    >>> edgelist = edgelist_from_csv('somefile.csv')
         [('a','1',3.4),('a','2',0.6),('a','b',10)]
     """
     df_csv = pd.read_csv(path, dtype = {'node1': str, 'node2': str, 'weight': np.float64}, **kwargs)
@@ -85,6 +86,7 @@ def edgelist_from_csv(path, **kwargs):
     if header_names[0] != 'node1' or header_names[1] != 'node2' or header_names[2] != 'weight':
         raise TypeError('The header format is different from the required one.')
     return list(df_csv.itertuples(index = False, name = None))
+
 
 def complete_edgelist(Z, info=False, **kwargs):
     """
@@ -111,27 +113,27 @@ def complete_edgelist(Z, info=False, **kwargs):
         >>> x1 = np.random.normal(7, 1, 3)
         >>> y1 = np.random.normal(9, 1, 3)
         >>> points = np.column_stack((x1, y1))
-        >>> df = xn2v.complete_edgelist(points)
+        >>> df = complete_edgelist(points)
               node1 node2    weight
-            0     0     0  0.000000
-            1     0     1  1.358972
-            2     0     2  2.393888
-            3     1     0  1.358972
-            4     1     1  0.000000
-            5     1     2  1.345274
-            6     2     0  2.393888
-            7     2     1  1.345274
-            8     2     2  0.000000
+            0     0     0  1.000000
+            1     0     1  0.015445
+            2     0     2  0.018235
+            3     1     0  0.015445
+            4     1     1  1.000000
+            5     1     2  0.834821
+            6     2     0  0.018235
+            7     2     1  0.834821
+            8     2     2  1.000000
     """
     dimension = Z[0].size  # Number of coordinates per point
     NPoints = Z[:, 0].size  # Number of points
-    weights = distance.cdist(Z, Z, 'euclidean') # Distance between all points
+    weights = distance.cdist(Z, Z, 'euclidean')  # Distance between all points
     df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
     l = 0
     for i in range(0, NPoints):
         for j in range(0, NPoints):
-            df.loc[l] = [f"{i}", f"{j}", weights[i][j]]
-            l+=1
+            df.loc[l] = [f"{i}", f"{j}", np.exp(-weights[i][j])]
+            l += 1
     if info == True:
         print('\033[1m' + '--------- General Information ---------')
         print('Edge list of a fully connected network.')
@@ -143,6 +145,7 @@ def complete_edgelist(Z, info=False, **kwargs):
         print('- Average weight: ', np.mean(weights))
         print('- Weight Variance: ', np.var(weights))
     return df
+
 
 def stellar_edgelist(Z, info=False, **kwargs):
     """
@@ -169,39 +172,38 @@ def stellar_edgelist(Z, info=False, **kwargs):
     >>> x1 = np.random.normal(7, 1, 6)
     >>> y1 = np.random.normal(9, 1, 6)
     >>> points_1 = np.column_stack((x1, y1))
-    >>> df = xn2v.stellar_edgelist(points_1)
-          node1 node2     weight
-        0     0     1  12.571278
-        1     0     2  11.765633
-        2     0     3   9.735974
-        3     0     4  12.181443
-        4     0     5  11.027584
-        5     0     6  12.755861
-
+    >>> df = stellar_edgelist(points_1)
+          node1      node2     weight
+        0     origin     1  12.571278
+        1     origin     2  11.765633
+        2     origin     3   9.735974
+        3     origin     4  12.181443
+        4     origin     5  11.027584
+        5     origin     6  12.755861
     >>> x2 = np.random.normal(107, 2, 3)
     >>> y2 = np.random.normal(101, 1, 3)
     >>> points_2 = np.column_stack((x2, y2))
     >>> tot = np.concatenate((points_1,points_2),axis=0)
-    >>> df = xn2v.stellar_edgelist(tot)
-          node1 node2     weight
-        0     0     1  12.571278
-        1     0     2  11.765633
-        2     0     3   9.735974
-        3     0     4  12.181443
-        4     0     5  11.027584
-        5     0     6  12.755861
-        6     0     7  146.229997
-        7     0     8  146.952899
-        8     0     9  146.595700
+    >>> df = stellar_edgelist(tot)
+          node1      node2     weight
+        0     origin     1  12.571278
+        1     origin     2  11.765633
+        2     origin     3   9.735974
+        3     origin     4  12.181443
+        4     origin     5  11.027584
+        5     origin     6  12.755861
+        6     origin     7  146.229997
+        7     origin     8  146.952899
+        8     origin     9  146.595700
     """
-    dimension = Z[0].size # Number of coordinates per point
-    NPoints = Z[:,0].size # Number of points
+    dimension = Z[0].size  # Number of coordinates per point
+    NPoints = Z[:, 0].size  # Number of points
     weights = np.linalg.norm(Z, axis = 1)
     df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
-    for i in range(0,NPoints):
-        df.loc[i] = ['0',f"{i+1}",weights[i]]
+    for i in range(0, NPoints):
+        df.loc[i] = ['origin', f"{i + 1}", weights[i]]
     if info == True:
-        print('\033[1m'+'--------- General Information ---------')
+        print('\033[1m' + '--------- General Information ---------')
         print('Edge list of a stellar network.')
         print('The weights are calculated using the euclidean norm.\n')
         print('- Space dimensionality: ', dimension)
@@ -211,6 +213,7 @@ def stellar_edgelist(Z, info=False, **kwargs):
         print('- Average weight: ', np.mean(weights))
         print('- Weight Variance: ', np.var(weights))
     return df
+
 
 def best_line_projection(Z):
     """
@@ -223,18 +226,16 @@ def best_line_projection(Z):
     Z : numpy ndarray
         Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
         are the coordinates.
-
     Returns
     -------
     output : numpy ndarray
         The output of the function is a numpy ndarray containing the transformed points of the dataset.
-
     Examples
     --------
     >>> x1 = np.random.normal(7, 1, 6)
     >>> y1 = np.random.normal(9, 1, 6)
     >>> points = np.column_stack((x1, y1))
-    >>> xn2v.best_line_projection(points)
+    >>> best_line_projection(points)
         [[-0.15079291  1.12774076]
          [ 2.65759595  4.44293266]
          [ 3.49319696  5.42932658]]
@@ -243,7 +244,7 @@ def best_line_projection(Z):
     NPoints = Z[:, 0].size
     dimension = Z[0].size
     projections = []
-    for i in range(0,NPoints):
+    for i in range(0, NPoints):
         projections.extend(np.array(a.project_point(Z[i])))
     projections = np.reshape(projections, (NPoints, dimension))
     return projections
@@ -313,7 +314,6 @@ def recover_points(Z, G, nodes):
         pos += 1
     return np.array(picked_nodes)
 
-
 def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_model = False, 
                   model_name = 'model.wordvectors' , **kwargs):
     """
@@ -368,6 +368,7 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
         relatable -- belonging to the same topic. If the value is small, 2-15, then we will likely have interchangeable
         words, while if it is large, >15, we will have relatable words.
         The default value is '10'
+
     Returns
     -------
     output : ndarray, ndarray
@@ -434,33 +435,33 @@ def Load(file):
 
 def Draw(G, nodes_result, title = 'Community Network', **kwargs):
     """
-        Description
-        -----------
-        Draws a networkx plot highlighting some specific nodes in that network. The last node is higlighted in red, the
-        remaining nodes in "nodes_result" are in blue, while the rest of the network is green.
+    Description
+    -----------
+    Draws a networkx plot highlighting some specific nodes in that network. The last node is higlighted in red, the
+    remaining nodes in "nodes_result" are in blue, while the rest of the network is green.
 
-        Parameters
-        ----------
-        G : networkx.Graph object
-            Sets the network that will be drawn.
-        nodes_result : ndarray
-            Gives the nodes that will be highlighted in the network. The last element will be red, the others blue.
-        title : string, optional
-            Sets the title of the plot.
+    Parameters
+    ----------
+    G : networkx.Graph object
+        Sets the network that will be drawn.
+    nodes_result : ndarray
+        Gives the nodes that will be highlighted in the network. The last element will be red, the others blue.
+    title : string, optional
+        Sets the title of the plot.
 
-        Notes
-        -----
-        - This function returns a networkx draw plot, which is good only for networks with few nodes (~40). For larger
-          networks I suggest to use other visualization methods, like Gephi.
+    Notes
+    -----
+    - This function returns a networkx draw plot, which is good only for networks with few nodes (~40). For larger
+      networks I suggest to use other visualization methods, like Gephi.
 
-        Examples
-        --------
-        >>> G = nx.generators.balanced_tree(r=3, h=4)
-        >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=100, 
-        >>>                                   p=0.1, q=0.9, workers=4)
-        >>> red_node = 2
-        >>> nodes = np.append(nodes, red_node)
-        >>> Draw(G, nodes)
+    Examples
+    --------
+    >>> G = nx.generators.balanced_tree(r=3, h=4)
+    >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=100, 
+    >>>                                   p=0.1, q=0.9, workers=4)
+    >>> red_node = 2
+    >>> nodes = np.append(nodes, red_node)
+    >>> Draw(G, nodes)
     """
     color_map = []
     for node in G:
