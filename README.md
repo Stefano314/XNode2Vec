@@ -38,9 +38,11 @@ transf_dataset = xn2v.best_line_projection(dataset) # Points transformation
 df = xn2v.complete_edgelist(transf_dataset) # Pandas edge list generation
 edgelist = xn2v.generate_edgelist(df)
 G = nx.Graph()
-G.add_weighted_edges_from(a) # Feed the graph with the edge list
+G.add_weighted_edges_from(edgelist) # Feed the graph with the edge list
 
-nodes, similarity = similar_nodes(G, dim=128, walk_length=20, context=5, p=0.1, q=0.9, workers=4)
+nodes, similarity = similar_nodes(G, dim=128, walk_length=20, context=5, picked=10, p=0.1, q=0.9, workers=4)
+
+similar_points = recover_points(family1,G,nodes) # Final cluster
 ```
 Objects Syntax
 --------------
