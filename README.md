@@ -8,7 +8,7 @@ Installation
 ------------
 In order to install the Xnode2vec package simply use pip:
 
-- pip install Xnode2vec
+- ``` pip install Xnode2vec ```
 
 *If there are some problems with the installation, please read the "Note" below.*
 
@@ -24,8 +24,8 @@ The idea behind is straightforward:
 import numpy as np
 import Xnode2vec as xn2v
 
-x1 = np.random.normal(16, 1, 20)
-y1 = np.random.normal(9, 1, 20)
+x1 = np.random.normal(4, 1, 20)
+y1 = np.random.normal(5, 1, 20)
 x2 = np.random.normal(17, 2, 20)
 y2 = np.random.normal(13, 1, 20)
 
