@@ -23,6 +23,7 @@ The idea behind is straightforward:
 ```
 import numpy as np
 import Xnode2vec as xn2v
+import pandas as pd
 
 x1 = np.random.normal(4, 1, 20)
 y1 = np.random.normal(5, 1, 20)
@@ -40,10 +41,38 @@ edgelist = xn2v.generate_edgelist(df)
 G = nx.Graph()
 G.add_weighted_edges_from(edgelist) # Feed the graph with the edge list
 
-nodes, similarity = similar_nodes(G, dim=128, walk_length=20, context=5, picked=10, p=0.1, q=0.9, workers=4)
+nodes, similarity = xn2v.similar_nodes(G, dim=128, walk_length=20, context=5, picked=10, p=0.1, q=0.9, workers=4)
 
-similar_points = recover_points(dataset,G,nodes) # Final cluster
+similar_points = xn2v.recover_points(dataset,G,nodes) # Final cluster
 ```
+Using the same setup as before, let's perform an even more complex analysis:
+
+```
+x1 = np.random.normal(16, 2, 20)
+y1 = np.random.normal(9, 2, 20)
+x2 = np.random.normal(30, 2, 20)
+y2 = np.random.normal(30, 2, 20)
+x3 = np.random.normal(2, 2, 20)
+y3 = np.random.normal(1, 2, 20)
+x4 = np.random.normal(30, 2, 20)
+y4 = np.random.normal(70, 2, 20)
+family1 = np.column_stack((x1, y1)) # REQUIRED ARRAY FORMAT
+family2 = np.column_stack((x2, y2)) # REQUIRED ARRAY FORMAT
+family3 = np.column_stack((x3, y3)) # REQUIRED ARRAY FORMAT
+family4 = np.column_stack((x4, y4)) # REQUIRED ARRAY FORMAT
+dataset = np.concatenate((family1,family2,family3,family4),axis=0) # Generic dataset
+
+df = complete_edgelist(dataset) # Pandas edge list generation
+df = generate_edgelist(df) # Networkx edgelist format
+G = nx.Graph()
+G.add_weighted_edges_from(df)
+
+points_families = []
+for i in range(0,len(nodes_families)):
+    points_families.append(recover_points(dataset,G,nodes_families[i])
+```
+Now the list ```points_families``` contains the four clusters -- clearly taking in account possible statistical errors. The results are however surprisingly good in many situations.
+
 Objects Syntax
 --------------
 Here we report the list of structures required to use the Xnode2vec package:
