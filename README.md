@@ -53,7 +53,8 @@ Here we report the list of structures required to use the Xnode2vec package:
 
 Note
 ----
-9/17/2021: I had some issues when installing the fastnode2vec package; in particular, the example given by Louis Abraham gives an error. I noticed that after the installation, the declaration of the file "node2vec.py" wasn't the same as the latest version available on its GitHub (at the moment). My brutal solution was simply to just copy the whole content into the node2vec.py file. This solves the problem.
+- 9/17/2021: I had some issues when installing the fastnode2vec package; in particular, the example given by Louis Abraham gives an error. I noticed that after the installation, the declaration of the file "node2vec.py" wasn't the same as the latest version available on its GitHub (at the moment). My brutal solution was simply to just copy the whole content into the node2vec.py file. This solves the problem.
+- 9/17/2021: Numba requires numpy <= 1.20 in order to work.
 
 # Examples
 Most Similar Nodes, Balanced Tree
