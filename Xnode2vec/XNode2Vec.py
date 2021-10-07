@@ -28,7 +28,7 @@ def generate_edgelist(df):
     Note
     ----
     - In order to generate a **networkx** object it's only required to give the list to the Graph() constructor
-    >>> edgelist = generate_edgelist(DataFrame)
+    >>> edgelist = xn2v.generate_edgelist(DataFrame)
     >>> G = nx.Graph()
     >>> G.add_weighted_edges_from(edgelist)
     - The data types of the 'node1' and 'node2' columns must be strings, otherwise they will be converted as strings.
@@ -37,7 +37,7 @@ def generate_edgelist(df):
     --------
     >>> import pandas as pd
     >>> df = pd.DataFrame(np.array([[1, 2, 3.7], [1, 3, 0.33], [2, 7, 12]]), columns=['node1', 'node2', 'weight'])
-    >>> edgelist = generate_edgelist(df)
+    >>> edgelist = xn2v.generate_edgelist(df)
         [('1.0', '2.0', 3.7), ('1.0', '3.0', 0.33), ('2.0', '7.0', 12.0)]
     """
     # check header:
@@ -69,14 +69,14 @@ def edgelist_from_csv(path, **kwargs):
     Note
     ----
     - In order to generate a **networkx** object it's only required to give the list to the Graph() constructor
-    >>> edgelist = get_edgelist('some_edgelist.csv')
+    >>> edgelist = xn2v.edgelist_from_csv('some_edgelist.csv')
     >>> G = nx.Graph()
     >>> G.add_weighted_edges_from(edgelist)
     - The data types of the 'node1' and 'node2' columns must be strings, otherwise they will be converted as strings.
 
     Examples
     --------
-    >>> edgelist = edgelist_from_csv('somefile.csv')
+    >>> edgelist = xn2v.edgelist_from_csv('somefile.csv')
         [('a','1',3.4),('a','2',0.6),('a','b',10)]
     """
     df_csv = pd.read_csv(path, dtype = {'node1': str, 'node2': str, 'weight': np.float64}, **kwargs)
@@ -111,7 +111,7 @@ def complete_edgelist(Z, info=False, **kwargs):
         >>> x1 = np.random.normal(7, 1, 3)
         >>> y1 = np.random.normal(9, 1, 3)
         >>> points = np.column_stack((x1, y1))
-        >>> df = complete_edgelist(points)
+        >>> df = xn2v.complete_edgelist(points)
               node1 node2    weight
             0     0     0  1.000000
             1     0     1  0.015445
@@ -168,7 +168,7 @@ def stellar_edgelist(Z, info=False, **kwargs):
     >>> x1 = np.random.normal(7, 1, 6)
     >>> y1 = np.random.normal(9, 1, 6)
     >>> points_1 = np.column_stack((x1, y1))
-    >>> df = stellar_edgelist(points_1)
+    >>> df = xn2v.stellar_edgelist(points_1)
           node1      node2     weight
         0     origin     0  12.571278
         1     origin     1  11.765633
@@ -180,7 +180,7 @@ def stellar_edgelist(Z, info=False, **kwargs):
     >>> y2 = np.random.normal(101, 1, 3)
     >>> points_2 = np.column_stack((x2, y2))
     >>> tot = np.concatenate((points_1,points_2),axis=0)
-    >>> df = stellar_edgelist(tot)
+    >>> df = xn2v.stellar_edgelist(tot)
           node1      node2     weight
         0     origin     0  12.571278
         1     origin     1  11.765633
@@ -222,16 +222,18 @@ def best_line_projection(Z):
     Z : numpy ndarray
         Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
         are the coordinates.
+        
     Returns
     -------
     output : numpy ndarray
         The output of the function is a numpy ndarray containing the transformed points of the dataset.
+        
     Examples
     --------
     >>> x1 = np.random.normal(7, 1, 6)
     >>> y1 = np.random.normal(9, 1, 6)
     >>> points = np.column_stack((x1, y1))
-    >>> best_line_projection(points)
+    >>> xn2v.best_line_projection(points)
         [[-0.15079291  1.12774076]
          [ 2.65759595  4.44293266]
          [ 3.49319696  5.42932658]]
@@ -244,6 +246,118 @@ def best_line_projection(Z):
         projections.extend(np.array(a.project_point(Z[i])))
     projections = np.reshape(projections, (NPoints, dimension))
     return projections
+
+def Cluster(result, cluster_rigidity = 0.7):
+    """
+        Description
+        -----------
+        This function takes the nodes that have a similarity higher than the one set by *cluster_rigidity*.
+
+        Parameters
+        ----------
+        result : list
+            This parameter must be a list of two elements: the first is the nodes labels vector, the other is their
+            similarities vector.
+        cluster_rigidity : float, optional
+            Sets the similarity threshold of the nodes. It should be a number between 0 and 1. The default value is
+            '0.7'.
+
+        Returns
+        -------
+        output : numpy ndarray
+            The output is a numpy array containing the nodes that satisfy the condition required.
+
+        Examples
+        --------
+        >>> nodes = np.arange(0,5)
+            [0 1 2 3 4]
+        >>> similarities = [0.5,0.9,0.91,0.87,0.67]
+        >>> xn2v.Cluster([nodes,similarities], cluster_rigidity = 0.75)
+            ['1' '2' '3']
+    """
+    cluster = np.array(result[0],dtype = str)
+    positions = np.where(np.array(result[1]) >= cluster_rigidity)
+    return(cluster[positions])
+
+def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction = 0.8, **kwargs):
+    """
+        Description
+        -----------
+        This function detects the **clusters** that compose a generic dataset. The dataset must be given as a
+        **networkx** graph, using the proper data transformation. The clustering procedure uses Node2Vec algorithm to
+        find the most similar nodes in the network.
+
+        Parameters
+        ----------
+        G : networkx.Graph()
+            Gives the network that will be analyzed.
+        cluster_rigidity : float, optional
+            Sets the similarity threshold of the nodes. It should be a number between 0 and 1. The default value is
+            '0.7'.
+        spacing : int, optional
+            Sets the increment of the position when picking the nodes for the analysis. The nodes are picked every
+            *spacing* value between the initial node label and the last one. The default value is '5'.
+        dim_fraction : float, optional
+            Sets the minumum threshold for choosing when to expand the previously generated cluster. This parameter
+            appears when considering the current most similar nodes picked by the Node2Vec algorithm; in particular
+            it sets the minumum number of nodes that are already present in the generated clusters family before adding
+            the remaining ones to the previous cluster.
+
+        Note
+        ----
+        - The function returns only the nodes labels from a specific network. In order to go back to the initial points
+          it's necessary to use the function **xn2v.recover_points(dataset,Graph,Clusters[i])**. Up to now, you can 
+          insert only a one-dimensional vector inside **xn2v.recover_points()**, meaning that if you have N clusters
+          inside the list obtained by **xn2v.clusters_detection()** you'll have to call **xn2v.recover_points()**
+          N times.
+
+        Returns
+        -------
+        output : list
+            The output is list of numpy arrays containing nodes labels from the given network *G*. Each array represents
+            a specific cluster.
+
+        Examples
+        --------
+        >>> df = xn2v.edgelist_from_csv('somefile.csv')
+        >>> df = xn2v.generate_edgelist(df)
+        >>> xn2v.clusters_detection(G, cluster_rigidity = 0.75, spacing = 5, dim_fraction = 0.8, picked=100,
+        >>>                         dim=100,context=5,Weight=True, walk_length=20)
+            --------- Clusters Information ---------
+            - Number of Clusters:  3
+            [array(['1', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
+            '2', '3', '4', '5', '6', '7', '9'], dtype='<U2'),
+            array(['21', '23', '24', '26', '27', '28', '29', '30', '31', '32', '33',
+            '34', '35', '36', '37', '38', '39'], dtype='<U2'),
+            array(['41', '42', '44', '45', '47', '48', '49', '50', '51', '52', '53',
+            '54', '55', '56', '57', '58', '59'], dtype='<U2')]
+    """
+    clusters = []
+    index = 0
+    for node_id in list(G.nodes)[::spacing]:
+        nodes, similarities = xn2v.similar_nodes(G, node_id, **kwargs)
+        cluster = Cluster([nodes, similarities], cluster_rigidity)
+        dimension = np.size(cluster)
+        bool_positions = []
+        if len(clusters) != 0:
+            for list_ in clusters:
+                bool_positions.append(np.isin(cluster, list_))
+            bool_positions = [not elem for elem in list(map(bool, sum(bool_positions)))]
+        if all(bool_positions):
+            # Creating new cluster if all the nodes are different.
+            print("Creating new cluster")
+            np.warnings.filterwarnings('ignore', category = np.VisibleDeprecationWarning)
+            clusters.append(cluster)
+            index += 1
+        elif dimension - np.count_nonzero(bool_positions) > int(dimension*dim_fraction):
+            # Expanding previous cluster if the condition is satisfied.
+            # The condition is: expand if the number of different nodes is higher than a fraction of the total nodes
+            print("Extend previous cluster")
+            clusters[index-1] = np.unique(np.append(clusters[index-1],cluster[np.invert(bool_positions)]))
+        else: pass
+    print('\033[1m' + '--------- Clusters Information ---------')
+    print('- Number of Clusters: ',index)
+    return clusters
 
 def recover_points(Z, G, nodes):
     """
@@ -278,12 +392,12 @@ def recover_points(Z, G, nodes):
         >>> family1 = np.column_stack((x1, y1)) # REQUIRED ARRAY FORMAT
         >>> family2 = np.column_stack((x2, y2)) # REQUIRED ARRAY FORMAT
         >>> dataset = np.concatenate((family1,family2),axis=0) # Generic dataset
-        >>> df = complete_edgelist(dataset) # Pandas edge list generation
-        >>> df = generate_edgelist(df)
+        >>> df = xn2v.complete_edgelist(dataset) # Pandas edge list generation
+        >>> df = xn2v.generate_edgelist(df)
         >>> G = nx.Graph()
         >>> G.add_weighted_edges_from(df)
         >>> nodes, similarity = xn2v.similar_nodes(G,node='1',picked=10,walk_length=20,dim=100,context=5,Weight=True)
-        >>> cluseter = recover_points(dataset,G,nodes)
+        >>> cluseter = xn2v.recover_points(dataset,G,nodes)
         [[17.98575878  8.99318017]
          [18.03438744  9.46128979]
          [15.83803679 10.39565391]
@@ -384,7 +498,7 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
     Examples
     --------
     >>> G = nx.generators.balanced_tree(r=3, h=4)
-    >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=10, 
+    >>> nodes, similarity = xn2v.similar_nodes(G, dim=128, walk_length=30, context=10, 
     >>>                                   p=0.1, q=0.9, workers=4)
         nodes: [0 4 5 6 45 40 14 43 13 64]
         similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 0.64997339 
@@ -455,11 +569,11 @@ def Draw(G, nodes_result, title = 'Community Network', **kwargs):
     Examples
     --------
     >>> G = nx.generators.balanced_tree(r=3, h=4)
-    >>> nodes, similarity = similar_nodes(G, dim=128, walk_length=30, context=100, 
+    >>> nodes, similarity = xn2v.similar_nodes(G, dim=128, walk_length=30, context=100, 
     >>>                                   p=0.1, q=0.9, workers=4)
     >>> red_node = 2
     >>> nodes = np.append(nodes, red_node)
-    >>> Draw(G, nodes)
+    >>> xn2v.Draw(G, nodes)
     """
     color_map = []
     for node in G:
