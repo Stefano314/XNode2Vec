@@ -7,7 +7,6 @@ import pandas as pd
 import networkx as nx
 from skspatial.objects import Line
 from scipy.spatial import distance
-from tqdm import tqdm
 
 def generate_edgelist(df):
     """
@@ -48,7 +47,6 @@ def generate_edgelist(df):
     # forcing type values
     df = df.astype({'node1': str, 'node2': str, 'weight': np.float64})
     return list(df.itertuples(index = False, name = None))
-
 
 def edgelist_from_csv(path, **kwargs):
     """
@@ -127,19 +125,13 @@ def complete_edgelist(Z, info=False, **kwargs):
     """
     dimension = Z[0].size  # Number of coordinates per point
     NPoints = Z[:, 0].size  # Number of points
-    weights = distance.cdist(Z, Z, 'euclidean')  # Distance between all points
-    df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
-    l = 0
-    if info == False:
-        for i in range(0, NPoints):
-            for j in range(0, NPoints):
-                df.loc[l] = [f"{i}", f"{j}", np.exp(-weights[i][j])]
-                l += 1
-    elif info == True:
-        for i in tqdm(range(0, NPoints), desc='Generating Complete Network'):
-            for j in range(0, NPoints):
-                df.loc[l] = [f"{i}", f"{j}", np.exp(-weights[i][j])]
-                l += 1
+    weights = np.exp(-distance.cdist(Z, Z, 'euclidean'))  # Distance between all points
+    weights = weights.flatten() # Weights coulumn
+    nodes_id = np.arange(NPoints).astype(str)
+    node1 = np.repeat(nodes_id,NPoints)
+    node2 = np.tile(nodes_id,NPoints)
+    df = pd.DataFrame({'node1': node1, 'node2': node2, 'weight': weights}, **kwargs)
+    if info == True:
         print('\033[1m' + '--------- General Information ---------')
         print('Edge list of a fully connected network.')
         print('The weights are calculated using minus the exponential of the euclidean norm.\n')
@@ -178,38 +170,36 @@ def stellar_edgelist(Z, info=False, **kwargs):
     >>> points_1 = np.column_stack((x1, y1))
     >>> df = stellar_edgelist(points_1)
           node1      node2     weight
-        0     origin     1  12.571278
-        1     origin     2  11.765633
-        2     origin     3   9.735974
-        3     origin     4  12.181443
-        4     origin     5  11.027584
-        5     origin     6  12.755861
+        0     origin     0  12.571278
+        1     origin     1  11.765633
+        2     origin     2   9.735974
+        3     origin     3  12.181443
+        4     origin     4  11.027584
+        5     origin     5  12.755861
     >>> x2 = np.random.normal(107, 2, 3)
     >>> y2 = np.random.normal(101, 1, 3)
     >>> points_2 = np.column_stack((x2, y2))
     >>> tot = np.concatenate((points_1,points_2),axis=0)
     >>> df = stellar_edgelist(tot)
           node1      node2     weight
-        0     origin     1  12.571278
-        1     origin     2  11.765633
-        2     origin     3   9.735974
-        3     origin     4  12.181443
-        4     origin     5  11.027584
-        5     origin     6  12.755861
-        6     origin     7  146.229997
-        7     origin     8  146.952899
-        8     origin     9  146.595700
+        0     origin     0  12.571278
+        1     origin     1  11.765633
+        2     origin     2   9.735974
+        3     origin     3  12.181443
+        4     origin     4  11.027584
+        5     origin     5  12.755861
+        6     origin     6  146.229997
+        7     origin     7  146.952899
+        8     origin     8  146.595700
     """
     dimension = Z[0].size  # Number of coordinates per point
     NPoints = Z[:, 0].size  # Number of points
-    weights = np.linalg.norm(Z, axis = 1)
-    df = pd.DataFrame(columns = ['node1', 'node2', 'weight'], **kwargs)
-    if info == False:
-        for i in range(0, NPoints):
-            df.loc[i] = ['origin', f"{i + 1}", np.exp(-weights[i])]
-    elif info == True:
-        for i in tqdm(range(0, NPoints), desc='Generating Stellar Network'):
-            df.loc[i] = ['origin', f"{i + 1}", np.exp(-weights[i])]
+    dimension = Z[0].size  # Number of coordinates per point
+    NPoints = Z[:, 0].size  # Number of points
+    weights = np.exp(-np.linalg.norm(Z, axis = 1))
+    node2 = np.arange(NPoints).astype(str)
+    df = pd.DataFrame({'node1': 'origin', 'node2': node2, 'weight': weights}, **kwargs)
+    if info == True:
         print('\033[1m' + '--------- General Information ---------')
         print('Edge list of a stellar network.')
         print('The weights are calculated using minus the exponential of the euclidean norm.\n')
