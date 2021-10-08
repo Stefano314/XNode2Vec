@@ -1,3 +1,7 @@
+[![PyPI
+version](https://badge.fury.io/py/Xnode2vec.svg)](https://badge.fury.io/py/Xnode2vec)
+
+
 # XNode2Vec - An Alternative Data Clustering Procedure
 Description
 -----------
@@ -20,7 +24,7 @@ The idea behind is straightforward:
 3. Build a **networkx** object that embeds the dataset with its crucial properties.
 4. Perform a node classification analysis with Node2Vec algorithm.
 
-```
+```python
 import numpy as np
 import Xnode2vec as xn2v
 import pandas as pd
@@ -47,7 +51,7 @@ similar_points = xn2v.recover_points(dataset,G,nodes) # Final cluster
 ```
 Using the same setup as before, let's perform an even more complex analysis:
 
-```
+```python
 x1 = np.random.normal(16, 2, 20)
 y1 = np.random.normal(9, 2, 20)
 x2 = np.random.normal(30, 2, 20)
@@ -88,22 +92,21 @@ Note
 # Examples
 Most Similar Nodes, Balanced Tree
 ---------------------------------
-![tree_15](https://user-images.githubusercontent.com/79590448/132143490-64ac2417-4d21-4a87-aa42-e9e0784bcb58.png)
+<img src="https://user-images.githubusercontent.com/79590448/132143490-64ac2417-4d21-4a87-aa42-e9e0784bcb58.png" width="550">
 
 Most Similar Nodes Distribution, E-R
 ------------------------------------
-![E-R_Nodes](https://user-images.githubusercontent.com/79590448/132143507-94807c17-4656-44b0-bac1-6af945d50fbf.png)
+<img src="https://user-images.githubusercontent.com/79590448/132143507-94807c17-4656-44b0-bac1-6af945d50fbf.png" width="550">
 
 Community Network
 -----------------
-![Com_class](https://user-images.githubusercontent.com/79590448/134899866-713d943d-0159-40af-bda5-9297195d4596.png)
+<img src="https://user-images.githubusercontent.com/79590448/134899866-713d943d-0159-40af-bda5-9297195d4596.png" width="550">
 
 Hi-C Translocation Detection
 ----------------------------
-![Sim3_2](https://user-images.githubusercontent.com/79590448/134982724-307334c8-74c8-48af-b6a8-88f0547fc40a.png)
+<img src="https://user-images.githubusercontent.com/79590448/134982724-307334c8-74c8-48af-b6a8-88f0547fc40a.png" width="550">
 
 Clustering Test
 ---------------
-![GenericDataset](https://user-images.githubusercontent.com/79590448/136523320-ca10d879-ce69-4216-af2c-d7fc674b17cd.png)![ClusteredDataset](https://user-images.githubusercontent.com/79590448/136523328-e024808e-9d0b-490b-ac0f-29514675620f.png)
-
+<img src="https://user-images.githubusercontent.com/79590448/136523320-ca10d879-ce69-4216-af2c-d7fc674b17cd.png" width="420">  <img src="https://user-images.githubusercontent.com/79590448/136523328-e024808e-9d0b-490b-ac0f-29514675620f.png" width="420">
 
