@@ -102,3 +102,8 @@ Hi-C Translocation Detection
 ----------------------------
 ![Sim3_2](https://user-images.githubusercontent.com/79590448/134982724-307334c8-74c8-48af-b6a8-88f0547fc40a.png)
 
+Clustering Test
+---------------
+![GenericDataset](https://user-images.githubusercontent.com/79590448/136523320-ca10d879-ce69-4216-af2c-d7fc674b17cd.png)![ClusteredDataset](https://user-images.githubusercontent.com/79590448/136523328-e024808e-9d0b-490b-ac0f-29514675620f.png)
+
+
