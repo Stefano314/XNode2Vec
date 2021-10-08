@@ -335,7 +335,7 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction = 0.8, *
     clusters = []
     index = 0
     for node_id in list(G.nodes)[::spacing]:
-        nodes, similarities = xn2v.similar_nodes(G, node_id, **kwargs)
+        nodes, similarities = similar_nodes(G, node_id, **kwargs)
         cluster = Cluster([nodes, similarities], cluster_rigidity)
         dimension = np.size(cluster)
         bool_positions = []
