@@ -8,6 +8,31 @@ import networkx as nx
 from skspatial.objects import Line
 from scipy.spatial import distance
 
+def nx_to_Graph(G, Weight = False):
+    """
+    Description
+    -----------
+    Performs a conversion from the **networkx** graph format to the **fastnode2vec** one, that is necessary to work with
+    fastnode2vec objects.
+
+    Parameters
+    ----------
+    G : networkx.Graph()
+        Gives the network that will be converted.
+    Weight : bool
+        Specifies if the network is a weighted one.
+
+    Returns
+    -------
+    output : fastnode2vec.Graph
+        The output of the function is a **fastnode2vec** Graph object.
+    """
+    if Weight == False:
+        G_fn2v = Graph(G.edges(), directed = False, weighted = Weight)
+    else:
+        G_fn2v = Graph(list(G.edges.data("weight", default = 1)), directed = False, weighted = Weight)
+    return G_fn2v
+
 def generate_edgelist(df):
     """
     Description
@@ -247,7 +272,7 @@ def best_line_projection(Z):
     projections = np.reshape(projections, (NPoints, dimension))
     return projections
 
-def Cluster(result, cluster_rigidity = 0.7):
+def cluster_generation(result, cluster_rigidity = 0.7):
     """
         Description
         -----------
@@ -272,7 +297,7 @@ def Cluster(result, cluster_rigidity = 0.7):
         >>> nodes = np.arange(0,5)
             [0 1 2 3 4]
         >>> similarities = [0.5,0.9,0.91,0.87,0.67]
-        >>> xn2v.Cluster([nodes,similarities], cluster_rigidity = 0.75)
+        >>> xn2v.cluster_generation([nodes,similarities], cluster_rigidity = 0.75)
             ['1' '2' '3']
     """
     cluster = np.array(result[0],dtype = str)
@@ -336,7 +361,7 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction = 0.8, *
     index = 0
     for node_id in list(G.nodes)[::spacing]:
         nodes, similarities = similar_nodes(G, node_id, **kwargs)
-        cluster = Cluster([nodes, similarities], cluster_rigidity)
+        cluster = cluster_generation([nodes, similarities], cluster_rigidity)
         dimension = np.size(cluster)
         bool_positions = []
         if len(clusters) != 0:
@@ -345,19 +370,24 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction = 0.8, *
             bool_positions = [not elem for elem in list(map(bool, sum(bool_positions)))]
         if all(bool_positions):
             # Creating new cluster if all the nodes are different.
-            print("Creating new cluster")
+            print("- Creating new cluster")
             np.warnings.filterwarnings('ignore', category = np.VisibleDeprecationWarning)
             clusters.append(cluster)
             index += 1
         elif dimension - np.count_nonzero(bool_positions) > int(dimension*dim_fraction):
             # Expanding previous cluster if the condition is satisfied.
             # The condition is: expand if the number of different nodes is higher than a fraction of the total nodes
-            print("Extend previous cluster")
+            print("- Extend previous cluster")
             clusters[index-1] = np.unique(np.append(clusters[index-1],cluster[np.invert(bool_positions)]))
         else: pass
+    tot_nodes = [val for sublist in clusters for val in sublist] # Flatten list of lists
+    unlabeled = list(set(list(G.nodes)) - set(tot_nodes)) # Get remaining nodes
     print('\033[1m' + '--------- Clusters Information ---------')
     print('- Number of Clusters: ',index)
-    return clusters
+    print('- Total nodes: ', len(tot_nodes)+len(unlabeled))
+    print('- Clustered nodes: ', len(tot_nodes))
+    print('- Number of unlabeled nodes: ', len(unlabeled))
+    return clusters, unlabeled
 
 def recover_points(Z, G, nodes):
     """
@@ -504,10 +534,7 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
         similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 0.64997339 
                      0.64365959 0.64236712 0.63170493 0.63144475]
     """
-    if Weight == False:
-        G_fn2v = Graph(G.edges(), directed = False, weighted = Weight)
-    else:
-        G_fn2v = Graph(list(G.edges.data("weight", default = 1)), directed = False, weighted = Weight)
+    G_fn2v = nx_to_Graph(G, Weight)
     n2v = Node2Vec(G_fn2v, **kwargs)
     n2v.train(epochs=train_time)
     if save_model == True:
@@ -519,7 +546,7 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
     similarity = np.array(similarity)
     return nodes_id, similarity
     
-def Load(file):
+def load_model(file):
     """
     Parameters
     ----------
@@ -545,7 +572,7 @@ def Load(file):
     model = Word2Vec.load(file)
     return model
 
-def Draw(G, nodes_result, title = 'Community Network', **kwargs):
+def draw_community(G, nodes_result, title = 'Community Network', **kwargs):
     """
     Description
     -----------
@@ -573,7 +600,7 @@ def Draw(G, nodes_result, title = 'Community Network', **kwargs):
     >>>                                   p=0.1, q=0.9, workers=4)
     >>> red_node = 2
     >>> nodes = np.append(nodes, red_node)
-    >>> xn2v.Draw(G, nodes)
+    >>> xn2v.draw_community(G, nodes)
     """
     color_map = []
     for node in G:
