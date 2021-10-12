@@ -572,7 +572,7 @@ def load_model(file):
     model = Word2Vec.load(file)
     return model
 
-def draw_community(G, nodes_result, title = 'Community Network', **kwargs):
+def draw_community(G, nodes_result, title='Community Network', **kwargs):
     """
     Description
     -----------
@@ -604,9 +604,9 @@ def draw_community(G, nodes_result, title = 'Community Network', **kwargs):
     """
     color_map = []
     for node in G:
-        if node == int(nodes_result[-1]):
+        if str(node) == str(nodes_result[-1]):
             color_map.append('red')
-        elif node in nodes_result:
+        elif str(node) in nodes_result.astype(str):
             color_map.append('blue')
         else:
             color_map.append('green')
