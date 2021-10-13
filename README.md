@@ -119,5 +119,5 @@ Hi-C Translocation Detection
 
 Clustering Test
 ---------------
-<img src="https://user-images.githubusercontent.com/79590448/136523320-ca10d879-ce69-4216-af2c-d7fc674b17cd.png" width="420">  <img src="https://user-images.githubusercontent.com/79590448/136523328-e024808e-9d0b-490b-ac0f-29514675620f.png" width="420">
+<img src="https://user-images.githubusercontent.com/79590448/136523320-ca10d879-ce69-4216-af2c-d7fc674b17cd.png" width="420">  <img src="https://user-images.githubusercontent.com/79590448/137180722-830c272f-768a-4ab2-b0ef-8b4628d090b7.png" width="420">
 
