@@ -52,28 +52,39 @@ similar_points = xn2v.recover_points(dataset,G,nodes) # Final cluster
 Using the same setup as before, let's perform an even more complex analysis:
 
 ```python
-x1 = np.random.normal(16, 2, 20)
-y1 = np.random.normal(9, 2, 20)
-x2 = np.random.normal(30, 2, 20)
-y2 = np.random.normal(30, 2, 20)
-x3 = np.random.normal(2, 2, 20)
-y3 = np.random.normal(1, 2, 20)
-x4 = np.random.normal(30, 2, 20)
-y4 = np.random.normal(70, 2, 20)
+x1 = np.random.normal(16, 2, 100)
+y1 = np.random.normal(9, 2, 100)
+x2 = np.random.normal(25, 2, 100)
+y2 = np.random.normal(25, 2, 100)
+x3 = np.random.normal(2, 2, 100)
+y3 = np.random.normal(1, 2, 100)
+x4 = np.random.normal(30, 2, 100)
+y4 = np.random.normal(70, 2, 100)
+
 family1 = np.column_stack((x1, y1)) # REQUIRED ARRAY FORMAT
 family2 = np.column_stack((x2, y2)) # REQUIRED ARRAY FORMAT
 family3 = np.column_stack((x3, y3)) # REQUIRED ARRAY FORMAT
 family4 = np.column_stack((x4, y4)) # REQUIRED ARRAY FORMAT
 dataset = np.concatenate((family1,family2,family3,family4),axis=0) # Generic dataset
 
-df = complete_edgelist(dataset) # Pandas edge list generation
-df = generate_edgelist(df) # Networkx edgelist format
+df = xn2v.complete_edgelist(dataset) # Pandas edge list generation
+df = xn2v.generate_edgelist(df) # Networkx edgelist format
 G = nx.Graph()
 G.add_weighted_edges_from(df)
-
+nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, cluster_rigidity = 0.85, spacing = 15, dim_fraction = 0.8,
+                                                          picked=100,dim=100,context=5,Weight=True, walk_length=20)
 points_families = []
+points_unlabeled = []
+
 for i in range(0,len(nodes_families)):
-    points_families.append(recover_points(dataset,G,nodes_families[i])
+    points_families.append(xn2v.recover_points(dataset,G,nodes_families[i]))
+points_unlabeled = xn2v.recover_points(dataset,G,unlabeled_nodes)
+
+plt.scatter(dataset[:,0], dataset[:,1])
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Generic Dataset', fontweight='bold')
+plt.show()
 ```
 Now the list ```points_families``` contains the four clusters -- clearly taking in account possible statistical errors. The results are however surprisingly good in many situations.
 
