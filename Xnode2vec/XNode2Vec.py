@@ -240,10 +240,9 @@ def low_limit_network(G,delta=1.):
     """
     Description
     -----------
-    This function performs a **network transformation**. It sets the link weight of the network to 0 if their initial
+    This function performs a **network transformation**. It sets the link weights of the network to 0 if their initial
     value was below a given threshold. The threshold is chosen to be a constant times the average links weight.
-    specific points and gives them weights according to other conditions.
-
+    
     Parameters
     ----------
     G : networkx.Graph()
