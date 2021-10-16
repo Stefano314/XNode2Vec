@@ -1,7 +1,3 @@
-[![PyPI
-version](https://badge.fury.io/py/Xnode2vec.svg)](https://badge.fury.io/py/Xnode2vec)
-
-
 # XNode2Vec - An Alternative Data Clustering Procedure
 Description
 -----------
