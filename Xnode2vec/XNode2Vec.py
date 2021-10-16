@@ -236,6 +236,42 @@ def stellar_edgelist(Z, info=False, **kwargs):
         print('- Weight Variance: ', np.var(weights))
     return df
 
+def low_limit_network(G,delta=1.):
+    """
+    Description
+    -----------
+    This function performs a **network transformation**. It sets the link weight of the network to 0 if their initial
+    value was below a given threshold. The threshold is chosen to be a constant times the average links weight.
+    specific points and gives them weights according to other conditions.
+
+    Parameters
+    ----------
+    G : networkx.Graph()
+        Gives the network that will be modified.
+    delta :  float, optional
+        Set the multiplying constant of the average link weight that will define the weight threshold.
+
+    Returns
+    -------
+    output : networkx.Graph()
+        Returns the networkx graph() resulting after the transformation.
+
+    Note
+    ----
+    - The number of nodes and edges of the original network won't change. Only specific weight values will be set to 0.
+    
+    Examples
+    --------
+    >>> G = xn2v.low_limit_network(G,1.9)
+    """
+    link_weights = nx.get_edge_attributes(G, 'weight')
+    weights = np.array(list(link_weights.values())).astype(float)
+    average_weight = np.mean(weights)
+    for u, v, d in G.edges(data = True):
+        if d['weight'] < delta * average_weight:
+            d['weight'] = 0.
+    return G
+
 def best_line_projection(Z):
     """
     Description
@@ -304,7 +340,7 @@ def cluster_generation(result, cluster_rigidity = 0.7):
     positions = np.where(np.array(result[1]) >= cluster_rigidity)
     return(cluster[positions])
 
-def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction = 0.8, **kwargs):
+def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **kwargs):
     """
         Description
         -----------
@@ -331,7 +367,7 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction = 0.8, *
         Note
         ----
         - The function returns only the nodes labels from a specific network. In order to go back to the initial points
-          it's necessary to use the function **xn2v.recover_points(dataset,Graph,Clusters[i])**. Up to now, you can 
+          it's necessary to use the function **xn2v.recover_points(dataset,Graph,Clusters[i])**. Up to now, you can
           insert only a one-dimensional vector inside **xn2v.recover_points()**, meaning that if you have N clusters
           inside the list obtained by **xn2v.clusters_detection()** you'll have to call **xn2v.recover_points()**
           N times.
@@ -359,43 +395,51 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction = 0.8, *
             '34', '35', '36', '37', '38', '39'], dtype='<U2'),
             array(['41', '42', '44', '45', '47', '48', '49', '50', '51', '52', '53',
             '54', '55', '56', '57', '58', '59'], dtype='<U2')]
-            [array(['1', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
-            '2', '3', '4', '5', '6', '7', '9'], dtype='<U2'),
-            array(['21', '23', '24', '26', '27', '28', '29', '30', '31', '32', '33',
-            '34', '35', '36', '37', '38', '39'], dtype='<U2'),
-            array(['41', '42', '44', '45', '47', '48', '49', '50', '51', '52', '53',
-            '54', '55', '56', '57', '58', '59'], dtype='<U2')]
     """
     clusters = []
+    nodes_clustered = []
     index = 0
     for node_id in list(G.nodes)[::spacing]:
         nodes, similarities = similar_nodes(G, node_id, **kwargs)
-        cluster = cluster_generation([nodes, similarities], cluster_rigidity)
-        dimension = np.size(cluster)
-        bool_positions = []
+        current_cluster = cluster_generation([nodes, similarities], cluster_rigidity) # TESTING THIS OBJECT.
+        dimension = np.size(current_cluster)
+        different_nodes_counters = [] # This is used to find the cluster to expand and to decide whether to create a new cluster.
         if len(clusters) != 0:
-            for list_ in clusters:
-                bool_positions.append(np.isin(cluster, list_))
-            bool_positions = [not elem for elem in list(map(bool, sum(bool_positions)))]
-        if all(bool_positions):
-            # Creating new cluster if all the nodes are different.
+            for previous_cluster in clusters:
+                # True = already in, False = new node. This is inverted, so True = new node.
+                current_positions = np.invert(np.isin(current_cluster, previous_cluster))
+                different_nodes_counters.append(current_positions.sum())
+                current_cluster = current_cluster[~np.in1d(current_cluster,previous_cluster)] # current_cluster filtering.
+        if dimension == np.size(current_cluster):
+            # Creating new cluster if the dimension of cluster remain the same. This means that the nodes in common are none.
+            if dimension == 0: raise Exception("Error: The dimension of the cluster is 0. Try to reduce cluster_rigidity.")
             print("- Creating new cluster")
-            np.warnings.filterwarnings('ignore', category = np.VisibleDeprecationWarning)
-            clusters.append(cluster)
+            clusters.append(current_cluster)
             index += 1
-        elif dimension - np.count_nonzero(bool_positions) > int(dimension*dim_fraction):
-            # Expanding previous cluster if the condition is satisfied.
-            # The condition is: expand if the number of different nodes is higher than a fraction of the total nodes
-            print("- Extend previous cluster")
-            clusters[index-1] = np.unique(np.append(clusters[index-1],cluster[np.invert(bool_positions)]))
-        else: pass
-    tot_nodes = [val for sublist in clusters for val in sublist] # Flatten list of lists
-    unlabeled = list(set(list(G.nodes)) - set(tot_nodes)) # Get remaining nodes
+        elif dimension - np.size(current_cluster) < int(dimension * dim_fraction):
+            # - If all nodes are different, dimension-np.size(current_cluster)==0 => Create new cluster.
+            # - If all nodes are the same, dimension-np.size(current_cluster)==dimension => Expand with nothing.
+            # - If some nodes are different, dimension-np.size(current_cluster)>0:
+            #       if dimension-np.size(current_cluster)<threshold => There are enough SAME nodes to expand the clusters.
+            ind = np.where(different_nodes_counters == np.min(different_nodes_counters))
+            if ind[0].size != 1: # Don't expand if there are ambiguities on where put the nodes.
+                pass
+            else:
+                # We extend the cluster that had the highest number of nodes in common. The current_cluster array is
+                # already filtered with the different nodes in the whole clusters list.
+                print(f"- Expand cluster number: {ind[0][0]+1}")
+                clusters[ind[0][0]] = np.append(clusters[ind[0][0]], current_cluster)
+        else:
+            pass
+    tot_nodes = [val for sublist in clusters for val in sublist]  # Flatten list of lists
+    unlabeled = list(set(list(G.nodes)) - set(tot_nodes))  # Get remaining nodes
     print('\033[1m' + '--------- Clusters Information ---------')
-    print('- Number of Clusters: ',index)
-    print('- Total nodes: ', len(tot_nodes)+len(unlabeled))
+    print('- Number of Clusters: ', index)
+    print('- Total nodes: ', len(tot_nodes) + len(unlabeled))
     print('- Clustered nodes: ', len(tot_nodes))
     print('- Number of unlabeled nodes: ', len(unlabeled))
+    for i in range(0,len(clusters)):
+        print(f"- Nodes in cluster {i+1}:", clusters[i].size)
     return clusters, unlabeled
 
 def recover_points(Z, G, nodes):
