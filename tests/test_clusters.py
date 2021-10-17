@@ -46,3 +46,47 @@ def test_similar_nodes_community():
     nodes, similarities = similar_nodes(G, node = 2, picked = r, context = 5, dim = 100, walk_length = 15)
     comparison = np.sort(nodes) == np.array([n for n in G.neighbors(2)])
     assert comparison.all()
+    
+def test_recover_order():
+    """
+    Checks if the order between the given dataset and its network representation is maintained.
+    """
+    dataset = np.array([[1,2,3,4], #point1
+                        [7.2,3,4.1,9], #point2
+                        [6,7,8,9], #point3
+                        [11,4.4,5,6.2], #point4
+                        [0.9,3.2,5,18.2], #point5
+                        [24,1.1,5.9,6], #point6
+                        [1,4.4,8,0.2]]) #point7
+    G = nx.Graph()
+    G.add_weighted_edges_from([('point1','point2',3.0),('point1','point3',7.5),('point1','point4',3.6),('point2','point4',1.9),
+                               ('point4','point5',1.0),('point2','point6',5.1),('point2','point7',1.0),('point3','point7',11)])
+    picked_nodes = ['point1','point5','point7']
+    expected_points = np.array([[1,2,3,4],
+                                [0.9,3.2,5,18.2],
+                                [1,4.4,8,0.2]])
+    cluster = recover_points(dataset, G, picked_nodes)
+    assert np.array_equal(cluster, expected_points)
+    
+    def test_recover_picked_nodes_permutation():
+    """
+    Checks if a generic permutation of the picked nodes affects the dataset recover points. This is clearly crucial,
+    since the sorting order of the picked nodes is generally different when performing a different simulation on the
+    same dataset.
+    """
+    dataset = np.array([[1,2,3,4], #point1
+                        [7.2,3,4.1,9], #point2
+                        [6,7,8,9], #point3
+                        [11,4.4,5,6.2], #point4
+                        [0.9,3.2,5,18.2], #point5
+                        [24,1.1,5.9,6], #point6
+                        [1,4.4,8,0.2]]) #point7
+    G = nx.Graph()
+    G.add_weighted_edges_from([('point1','point2',3.0),('point1','point3',7.5),('point1','point4',3.6),('point2','point4',1.9),
+                               ('point4','point5',1.0),('point2','point6',5.1),('point2','point7',1.0),('point3','point7',11)])
+    picked_nodes = ['point1','point5','point7']
+    permuted_nodes = np.random.permutation(picked_nodes)
+    cluster = recover_points(dataset, G, picked_nodes)
+    permuted_cluster = recover_points(dataset, G, permuted_nodes)
+    assert np.array_equal(cluster,permuted_cluster)
+    
