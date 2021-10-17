@@ -84,6 +84,31 @@ plt.show()
 ```
 Now the list ```points_families``` contains the four clusters -- clearly taking in account possible statistical errors. The results are however surprisingly good in many situations.
 
+Results
+-------
+The analysis prints out on the terminal automatically:
+- Number of clusters found.
+- Number of nodes analyzed.
+- Number of *clustered* nodes.
+- Number of *non-clustered* nodes.
+- Number of nodes in each cluster.
+
+The output is something of this type:
+```properties
+--------- Clusters Information ---------
+- Number of Clusters:  5
+- Total nodes:  400
+- Clustered nodes:  251
+- Number of unlabeled nodes:  149
+- Nodes in cluster 1: 16
+- Nodes in cluster 2: 52
+- Nodes in cluster 3: 83
+- Nodes in cluster 4: 64
+- Nodes in cluster 5: 36
+```
+
+The clustered objects are stored into a list of numpy vectors that are returned by the function *clusters_detection()*. It's important to get used to the *parameter selection* that determines the criteria with which the nodes are labeled.
+
 Objects Syntax
 --------------
 Here we report the list of structures required to use the Xnode2vec package:
@@ -97,20 +122,12 @@ Note
 - 9/17/2021: Numba requires numpy <= 1.20 in order to work.
 
 # Examples
-## Most Similar Nodes, Balanced Tree
-<img src="https://user-images.githubusercontent.com/79590448/132143490-64ac2417-4d21-4a87-aa42-e9e0784bcb58.png" width="550">
-
-## Most Similar Nodes Distribution, E-R
-<img src="https://user-images.githubusercontent.com/79590448/132143507-94807c17-4656-44b0-bac1-6af945d50fbf.png" width="550">
-
-## Community Network
-<img src="https://user-images.githubusercontent.com/79590448/134899866-713d943d-0159-40af-bda5-9297195d4596.png" width="550">
-
-## Hi-C Translocation Detection
-<img src="https://user-images.githubusercontent.com/79590448/134982724-307334c8-74c8-48af-b6a8-88f0547fc40a.png" width="550">
+## Generic Applications
+| Most Similar Nodes      | Similar Nodes Distribution | Community Network     | Hi-C Translocation Detection |
+| :---:        |    :----:   |          :---: | :---: |
+| <img src="https://user-images.githubusercontent.com/79590448/132143490-64ac2417-4d21-4a87-aa42-e9e0784bcb58.png" width="550">      | <img src="https://user-images.githubusercontent.com/79590448/132143507-94807c17-4656-44b0-bac1-6af945d50fbf.png" width="550">       | <img src="https://user-images.githubusercontent.com/79590448/134899866-713d943d-0159-40af-bda5-9297195d4596.png" width="550">   | <img src="https://user-images.githubusercontent.com/79590448/134982724-307334c8-74c8-48af-b6a8-88f0547fc40a.png" width="550"> |
 
 ## Clustering Test
 | Blops      | Moons | Circles     | Swiss Roll |
 | :---:        |    :----:   |          :---: | :---: |
 | <img src="https://user-images.githubusercontent.com/79590448/137629011-95424dba-fdf5-42c1-838e-cae0449fef97.png" width="420">      | <img src="https://user-images.githubusercontent.com/79590448/137628939-d2197cc9-c35f-4076-ab3a-e1601b8b332c.png" width="420">       | <img src="https://user-images.githubusercontent.com/79590448/137628957-59475901-126a-4ac5-b709-cd52774d51ec.png" width="420">   | <img src="https://user-images.githubusercontent.com/79590448/137628967-6f295711-702c-40e0-85d1-580826d176e0.png" width="420"> |
-
