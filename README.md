@@ -97,22 +97,20 @@ Note
 - 9/17/2021: Numba requires numpy <= 1.20 in order to work.
 
 # Examples
-Most Similar Nodes, Balanced Tree
----------------------------------
+## Most Similar Nodes, Balanced Tree
 <img src="https://user-images.githubusercontent.com/79590448/132143490-64ac2417-4d21-4a87-aa42-e9e0784bcb58.png" width="550">
 
-Most Similar Nodes Distribution, E-R
-------------------------------------
+## Most Similar Nodes Distribution, E-R
 <img src="https://user-images.githubusercontent.com/79590448/132143507-94807c17-4656-44b0-bac1-6af945d50fbf.png" width="550">
 
-Community Network
------------------
+## Community Network
 <img src="https://user-images.githubusercontent.com/79590448/134899866-713d943d-0159-40af-bda5-9297195d4596.png" width="550">
 
-Hi-C Translocation Detection
-----------------------------
+## Hi-C Translocation Detection
 <img src="https://user-images.githubusercontent.com/79590448/134982724-307334c8-74c8-48af-b6a8-88f0547fc40a.png" width="550">
 
-Clustering Test
----------------
-<img src="https://user-images.githubusercontent.com/79590448/137182676-f277a8ea-d4e5-4a16-ae44-bc01b249f619.png" width="420">  <img src="https://user-images.githubusercontent.com/79590448/137182670-cc6f165f-fbf8-46f9-ad3e-f46e6e11416b.png" width="420">
+## Clustering Test
+| Blops      | Moons | Circles     | Swiss Roll |
+| :---:        |    :----:   |          :---: | :---: |
+| <img src="https://user-images.githubusercontent.com/79590448/137629011-95424dba-fdf5-42c1-838e-cae0449fef97.png" width="420">      | <img src="https://user-images.githubusercontent.com/79590448/137628939-d2197cc9-c35f-4076-ab3a-e1601b8b332c.png" width="420">       | <img src="https://user-images.githubusercontent.com/79590448/137628957-59475901-126a-4ac5-b709-cd52774d51ec.png" width="420">   | <img src="https://user-images.githubusercontent.com/79590448/137628967-6f295711-702c-40e0-85d1-580826d176e0.png" width="420"> |
+
