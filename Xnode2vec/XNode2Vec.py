@@ -111,18 +111,21 @@ def edgelist_from_csv(path, **kwargs):
         raise TypeError('The header format is different from the required one.')
     return list(df_csv.itertuples(index = False, name = None))
 
-def complete_edgelist(Z, info=False, **kwargs):
+def complete_edgelist(Z, metric='euclidean', info=False, **kwargs):
     """
         Description
         -----------
         This function performs a **data transformation** from the space points to a network. It generates links between
-        specific points and gives them weights according to other conditions.
+        specific points and gives them weights according to the specified metric.
 
         Parameters
         ----------
         Z : numpy ndarray
             Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
             are the coordinates.
+        metric : string, optional
+            Specifies the metric in which the dataset Z is defined. The metric will determine the values of the weights
+            between the links.
         info :  bool
             Flag to print out some generic information of the dataset.
 
@@ -150,7 +153,7 @@ def complete_edgelist(Z, info=False, **kwargs):
     """
     dimension = Z[0].size  # Number of coordinates per point
     NPoints = Z[:, 0].size  # Number of points
-    weights = np.exp(-distance.cdist(Z, Z, 'euclidean'))  # Distance between all points
+    weights = np.exp(-distance.cdist(Z, Z, metric))  # Distance between all points
     weights = weights.flatten() # Weights coulumn
     nodes_id = np.arange(NPoints).astype(str)
     node1 = np.repeat(nodes_id,NPoints)
@@ -173,7 +176,7 @@ def stellar_edgelist(Z, info=False, **kwargs):
     Description
     -----------
     This function performs a **data transformation** from the space points to a network. It generates links between
-    specific points and gives them weights according to other conditions.
+    specific points and gives them weights according to specific conditions.
 
     Parameters
     ----------
