@@ -68,7 +68,7 @@ def test_recover_order():
     cluster = recover_points(dataset, G, picked_nodes)
     assert np.array_equal(cluster, expected_points)
     
-    def test_recover_picked_nodes_permutation():
+def test_recover_picked_nodes_permutation():
     """
     Checks if a generic permutation of the picked nodes affects the dataset recover points. This is clearly crucial,
     since the sorting order of the picked nodes is generally different when performing a different simulation on the
@@ -90,7 +90,7 @@ def test_recover_order():
     permuted_cluster = recover_points(dataset, G, permuted_nodes)
     assert np.array_equal(cluster,permuted_cluster)
     
-    def test_clusters_dimension1():
+def test_clusters_dimension1():
     """
     Tests if the *dim* parameter value is dim = 0 then the cluster won't be expanded.
     """
