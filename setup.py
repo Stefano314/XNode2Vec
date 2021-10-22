@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Xnode2vec",
-    version="0.10.0",
+    version="0.11.0",
     author="Stefano Bianchi",
     author_email="stefanobianchi314@gmail.com",
     description="Alternative method for data clustering using Node2Vec algorithm.",
