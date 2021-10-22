@@ -1,9 +1,17 @@
 import numpy as np
-import pandas as pd
 import networkx as nx
-from Xnode2vec import best_line_projection, low_limit_network
+from Xnode2vec import nx_to_Graph, best_line_projection, low_limit_network
 import pytest
+import fastnode2vec as fn2v
 
+def test_Graph_type():
+    """
+    Tests the object created by the function nx_to_Graph() belongs to the fastnode2vec.Graph class.
+    """
+    G = nx.generators.balanced_tree(2,2)
+    G_fn2v = xn2v.nx_to_Graph(G)
+    assert fn2v.Graph == type(G_fn2v)
+    
 def test_line_points():
     """
     Checks if the number of points returned by the best_line_projection() is the same as the original dataset.
