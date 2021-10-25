@@ -33,6 +33,41 @@ def nx_to_Graph(G, Weight = False):
         G_fn2v = Graph(list(G.edges.data("weight", default = 1)), directed = False, weighted = Weight)
     return G_fn2v
 
+def labels_modifier(G, new_ids):
+    """
+    Description
+    -----------
+    Changes the labels of the created networkx graph. It can be useful if we want to select rows from a dataframe that
+    we can't recover only with their positions in the vector.
+
+    Parameters
+    ----------
+    G : networkx.Graph()
+        Gives the network that will be modified.
+    new_ids : list
+        Ordered list of the new node labels.
+
+    Returns
+    -------
+    output : networkx.Graph()
+        Returns the same networkx graph() with the new labels.
+
+    Note
+    ----
+    - The number of nodes and edges of the original network won't change. Only specific weight values will be set to 0.
+
+    Examples
+    --------
+    >>> G = nx.generators.balanced_tree(3,2)
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    >>> new_indexes = ['node1',2,'noise','x',4,5,'main_hub',8,9,10,11,12,'end_point']
+    >>> G = xn2v.labels_modifier(G,new_indexes)
+    ['node1', 2, 'noise', 'x', 4, 5, 'main_hub', 8, 9, 10, 11, 12, 'end_point']
+    """
+    mapping = dict(zip(G, new_ids))
+    new_G = nx.relabel_nodes(G, mapping)
+    return new_G
+
 def generate_edgelist(df):
     """
     Description
