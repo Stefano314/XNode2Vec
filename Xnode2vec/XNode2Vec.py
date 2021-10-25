@@ -469,7 +469,7 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
         else:
             pass
     tot_nodes = [val for sublist in clusters for val in sublist]  # Flatten list of lists
-    unlabeled = list(set(list(G.nodes)) - set(tot_nodes))  # Get remaining nodes
+    unlabeled = list(set(np.array(list(G.nodes)).astype(str)) - set(tot_nodes))  # Get remaining nodes
     print('\033[1m' + '--------- Clusters Information ---------')
     print('- Number of Clusters: ', index)
     print('- Total nodes: ', len(tot_nodes) + len(unlabeled))
