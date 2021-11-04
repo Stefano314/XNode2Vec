@@ -67,8 +67,11 @@ df = xn2v.complete_edgelist(dataset) # Pandas edge list generation
 df = xn2v.generate_edgelist(df) # Networkx edgelist format
 G = nx.Graph()
 G.add_weighted_edges_from(df)
-nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, cluster_rigidity = 0.85, spacing = 15, dim_fraction = 0.8,
-                                                          picked=100,dim=100,context=5,Weight=True, walk_length=20)
+graph = xn2v.nx_to_Graph(G) # Load the Graph object to avoid multiple network readings
+nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, graph=graph, cluster_rigidity = 0.85, 
+                                                          spacing = 15, dim_fraction = 0.8,
+                                                          picked=100, dim=100, context=5, 
+                                                          Weight=True, walk_length=20)
 points_families = []
 points_unlabeled = []
 
@@ -115,6 +118,36 @@ Here we report the list of structures required to use the Xnode2vec package:
 - Dataset: ``` dataset = np.array([[1,2,3,..], ..., [1,2,3,..]])```; the rows corresponds to each point, while the coulumns to the coordinates.
 - Edge List: ``` edgelist = [(node_a,node_b,weight), ... , (node_c,node_d,weight)] ```; this is a list of tuples, structured as [starting_node, arriving_node, weight]
 - DataFrame: ``` pandas.DataFrame(np.array([[1, 2, 3.7], ..., [2, 7, 12]]), columns=['node1', 'node2', 'weight']) ```
+
+Functions Description
+---------------------
+- ```nx_to_Graph()``` : Performs a conversion from the **networkx** graph format to the **fastnode2vec** one, that is necessary to work with fastnode2vec objects.
+
+- ```labels_modifier()```: Changes the labels of the created networkx graph. It can be useful if we want to select rows from a dataframe that we can't recover only with their positions in the vector.
+
+- ```generate_edgelist()```: Read a pandas DataFrame and generates an edge list vector to eventually build a networkx graph. The syntax of the file header is rigidly controlled and can't be changed. The header format must be: (node1, node2, weight).
+
+- ```edgelist_from_csv()```: Read a .csv file using pandas dataframes and generates an edge list vector to eventually build a networkx graph. The syntax of the file header is rigidly controlled and can't be changed.
+
+- ```complete_edgelist()```: This function performs a **data transformation** from the space points to a network. It generates links between specific points and gives them weights according to the specified metric.
+
+- ```stellar_edgelist()```: This function performs a **data transformation** from the space points to a network. It generates links between specific points and gives them weights according to specific conditions.
+
+- ```low_limit_network()```: This function performs a **network transformation**. It sets the link weights of the network to 0 if their initial value was below a given threshold. The threshold is chosen to be a constant times the average links weight.
+
+- ```best_line_projection()```: Performs a linear best fit of the dataset points and projects them on the line itself.
+
+- ```cluster_generation()```: This function takes the nodes that have a similarity higher than the one set by *cluster_rigidity*.
+
+- ```clusters_detection()```: This function detects the **clusters** that compose a generic dataset. The dataset must be given as a **networkx** graph, using the proper data transformation. The clustering procedure uses Node2Vec algorithm to find the most similar nodes in the network.
+
+- ```recover_points()```: Recovers the spatial points from the analyzed network. It uses the fact that the order of the nodes that build the network is the same as the dataset one, therefore there is a one-to-one correspondence between nodes and points.
+
+- ```similar_nodes()```: Performs FastNode2Vec algorithm with full control on the crucial parameters. In particular, this function allows the user to keep working with networkx objects -- that are generally quite user-friendly -- instead of the ones required by the fastnode2vec algorithm.
+
+- ```load_model()```: Load the saved Gensim.Word2Vec model.
+
+- ```draw_community()```: Draws a networkx plot highlighting some specific nodes in that network. The last node is higlighted in red, the remaining nodes in "nodes_result" are in blue, while the rest of the network is green.
 
 Note
 ----
