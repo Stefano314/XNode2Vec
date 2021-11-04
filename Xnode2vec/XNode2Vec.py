@@ -593,6 +593,10 @@ def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = 
         Sets the first 'picked' nodes that are most similar to the node identified with 'node'. This is a
         gensim.models.word2vec parameter.
         The default value is '10'.
+    Epochs : int, optional
+        Sets the number of walks that start from the given node. It is strongly suggested to use more than one
+        walk.
+        The default value is '30'.
     train_time : int, optional
         Sets the number of times we want to apply the algorithm. It is the 'epochs' parameter in Node2Vec.
         The value of this parameter drastically affect the computational time.
