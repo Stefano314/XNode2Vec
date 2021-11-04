@@ -274,7 +274,7 @@ def stellar_edgelist(Z, info=False, **kwargs):
         print('- Weight Variance: ', np.var(weights))
     return df
 
-def low_limit_network(G,delta=1.):
+def low_limit_network(G, delta=1., remove=False):
     """
     Description
     -----------
@@ -287,15 +287,14 @@ def low_limit_network(G,delta=1.):
         Gives the network that will be modified.
     delta :  float, optional
         Set the multiplying constant of the average link weight that will define the weight threshold.
-
+    remove : bool
+        Tells if the links below the given threshold should be set to zero or removed.
+        The default value is 'False'.
+    
     Returns
     -------
     output : networkx.Graph()
         Returns the networkx graph() resulting after the transformation.
-
-    Note
-    ----
-    - The number of nodes and edges of the original network won't change. Only specific weight values will be set to 0.
     
     Examples
     --------
@@ -304,9 +303,16 @@ def low_limit_network(G,delta=1.):
     link_weights = nx.get_edge_attributes(G, 'weight')
     weights = np.array(list(link_weights.values())).astype(float)
     average_weight = np.mean(weights)
-    for u, v, d in G.edges(data = True):
-        if d['weight'] < delta * average_weight:
-            d['weight'] = 0.
+    if remove==True:
+        to_remove = []
+        for u, v, d in G.edges(data = True):
+            if d['weight'] <= delta * average_weight:
+                to_remove.append((u,v))
+        G.remove_edges_from(to_remove)
+    else:
+        for u, v, d in G.edges(data = True):
+            if d['weight'] <= delta * average_weight:
+                d['weight'] = 0.
     return G
 
 def best_line_projection(Z):
@@ -437,6 +443,7 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
     nodes_clustered = []
     index = 0
     for node_id in list(G.nodes)[::spacing]:
+        flag = True
         nodes, similarities = similar_nodes(G, node_id, **kwargs)
         current_cluster = cluster_generation([nodes, similarities], cluster_rigidity) # TESTING THIS OBJECT.
         dimension = np.size(current_cluster)
@@ -449,10 +456,15 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
                 current_cluster = current_cluster[~np.in1d(current_cluster,previous_cluster)] # current_cluster filtering.
         if dimension == np.size(current_cluster):
             # Creating new cluster if the dimension of cluster remain the same. This means that the nodes in common are none.
-            if dimension == 0: raise Exception("Error: The dimension of the cluster is 0. Try to reduce cluster_rigidity.")
-            print("- Creating new cluster")
-            clusters.append(current_cluster)
-            index += 1
+            if dimension == 0: # Stop only if the first cluster is empty.
+                if index == 0: raise Exception("Error: The dimension of the cluster is 0. Try to reduce cluster_rigidity.")
+                else:
+                    warnings.warn("Warning: The dimension of the cluster is 0. You may want to reduce cluster_rigidity.",RuntimeWarning)
+                    flag = False
+            if flag == True:
+                print("- Creating new cluster")
+                clusters.append(current_cluster)
+                index += 1
         elif dimension - np.size(current_cluster) < int(dimension * dim_fraction):
             # - If all nodes are different, dimension-np.size(current_cluster)==0 => Create new cluster.
             # - If all nodes are the same, dimension-np.size(current_cluster)==dimension => Expand with nothing.
@@ -546,8 +558,8 @@ def recover_points(Z, G, nodes):
         pos += 1
     return np.array(picked_nodes)
 
-def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_model = False, 
-                  model_name = 'model.wordvectors' , **kwargs):
+def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = False,
+                  model_name = 'model.wordvectors', graph = None, **kwargs):
     """
     Description
     -----------
@@ -595,17 +607,19 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
         be relatively short.
         The default value is '128'.
     context : int, optional
-        This is the Word2Vec "window" parameter. It sets the number of words **before** and **after** the current one that will
-        be kept for the analysis. Depending on its value, it manages to obtain words that are interchangeable and
-        relatable -- belonging to the same topic. If the value is small, 2-15, then we will likely have interchangeable
-        words, while if it is large, >15, we will have relatable words.
+        This is the Word2Vec `window` parameter. Depending on its value, it manages to obtain words that are
+        interchangeable and relatable -- belonging to the same topic. If the value is small, 2-15, then we will likely
+        have interchangeable words, while if it is large, >15, we will have relatable words.
+        It is namely the maximum distance between the current and predicted word within a `sentence`.
         The default value is '10'
 
     Returns
     -------
     output : ndarray, ndarray
         The output of the function is a tuple of two numpy arrays. The first contains the top 'picked' most similar
-        nodes to the 'node' one, while the second contains their similarities with respect to the 'node' one.
+        nodes to the 'node' one, while the second contains their similarities with respect to the 'node' one. The
+        similarity is calculated as the `cosine similarity` between the vectors relative to the words themselves.
+        Clearly, the dimension of the word vectors is given by `dim` parameter.
 
     Notes
     -----
@@ -624,16 +638,27 @@ def similar_nodes(G, node=1, picked=10, train_time = 30, Weight=False, save_mode
         similarity: [0.81231129 0.81083304 0.760795 0.7228986 0.66750246 0.64997339 
                      0.64365959 0.64236712 0.63170493 0.63144475]
     """
-    G_fn2v = nx_to_Graph(G, Weight)
-    n2v = Node2Vec(G_fn2v, **kwargs)
-    n2v.train(epochs=train_time)
-    if save_model == True:
-        n2v.save(model_name)
-    nodes = n2v.wv.most_similar(node, topn = picked)
-    nodes_id = list(list(zip(*nodes))[0])
-    similarity = list(list(zip(*nodes))[1])
-    nodes_id = np.array(nodes_id)
-    similarity = np.array(similarity)
+    if graph == None:
+        G_fn2v = nx_to_Graph(G, Weight)
+        n2v = Node2Vec(G_fn2v, **kwargs)
+        n2v.train(epochs=Epochs)
+        if save_model == True:
+            n2v.save(model_name)
+        nodes = n2v.wv.most_similar(node, topn = picked)
+        nodes_id = list(list(zip(*nodes))[0])
+        similarity = list(list(zip(*nodes))[1])
+        nodes_id = np.array(nodes_id)
+        similarity = np.array(similarity)
+    else:
+        n2v = Node2Vec(graph, **kwargs)
+        n2v.train(epochs = Epochs)
+        if save_model == True:
+            n2v.save(model_name)
+        nodes = n2v.wv.most_similar(node, topn = picked)
+        nodes_id = list(list(zip(*nodes))[0])
+        similarity = list(list(zip(*nodes))[1])
+        nodes_id = np.array(nodes_id)
+        similarity = np.array(similarity)
     return nodes_id, similarity
     
 def load_model(file):
