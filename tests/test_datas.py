@@ -28,9 +28,9 @@ def test_line_dimension():
 
 def test_low_threshold_zeros():
     """
-    Checks if all the values below the specified *2.13125* threshold are set to zero.
+    Checks if all the values below the specified *2.09* threshold are set to zero.
     """
-    delta = 0.5
+    delta = 0.19
     G = nx.Graph()
     G.add_weighted_edges_from([('1', '2', 3.0), ('1', '3', 7.5), ('1', '4', 3.6), ('2', '4', 1.9),
                                ('4', '5', 1.0), ('2', '6', 5.1), ('2', '7', 1.0), ('3', '7', 11)])
@@ -42,9 +42,9 @@ def test_low_threshold_zeros():
 
 def test_low_threshold_remove():
     """
-    Checks if all the values below the specified *2.13125* threshold are set to zero.
+    Checks if all the values below the specified *2.09* threshold are set to zero.
     """
-    delta = 0.5
+    delta = 0.19
     G = nx.Graph()
     G.add_weighted_edges_from([('1', '2', 3.0), ('1', '3', 7.5), ('1', '4', 3.6), ('2', '4', 1.9),
                                ('4', '5', 1.0), ('2', '6', 5.1), ('2', '7', 1.0), ('3', '7', 11)])
