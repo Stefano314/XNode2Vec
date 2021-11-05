@@ -146,7 +146,7 @@ def edgelist_from_csv(path, **kwargs):
         raise TypeError('The header format is different from the required one.')
     return list(df_csv.itertuples(index = False, name = None))
 
-def complete_edgelist(Z, metric='euclidean', info=False, **kwargs):
+def complete_edgelist(Z, metric='euclidean', stretch=1., info=False, **kwargs):
     """
         Description
         -----------
@@ -161,6 +161,9 @@ def complete_edgelist(Z, metric='euclidean', info=False, **kwargs):
         metric : string, optional
             Specifies the metric in which the dataset Z is defined. The metric will determine the values of the weights
             between the links.
+        stretch : float, optional
+            Enlarges the distance between different points exponentially.
+            The default value is '1.0'.
         info :  bool
             Flag to print out some generic information of the dataset.
 
@@ -188,7 +191,7 @@ def complete_edgelist(Z, metric='euclidean', info=False, **kwargs):
     """
     dimension = Z[0].size  # Number of coordinates per point
     NPoints = Z[:, 0].size  # Number of points
-    weights = np.exp(-distance.cdist(Z, Z, metric))  # Distance between all points
+    weights = stretch*np.exp(-stretch*distance.cdist(Z, Z, metric))  # Distance between all points
     weights = weights.flatten() # Weights coulumn
     nodes_id = np.arange(NPoints).astype(str)
     node1 = np.repeat(nodes_id,NPoints)
@@ -197,7 +200,7 @@ def complete_edgelist(Z, metric='euclidean', info=False, **kwargs):
     if info == True:
         print('\033[1m' + '--------- General Information ---------')
         print('Edge list of a fully connected network.')
-        print('The weights are calculated using minus the exponential of the euclidean norm.\n')
+        print('The weights are calculated using minus the exponential of the norm defined by the chosen metric.\n')
         print('- Space dimensionality: ', dimension)
         print('- Number of Points: ', NPoints)
         print('- Minimum weight: ', np.min(weights))
@@ -274,7 +277,7 @@ def stellar_edgelist(Z, info=False, **kwargs):
         print('- Weight Variance: ', np.var(weights))
     return df
 
-def low_limit_network(G, delta=1., remove=False):
+def low_limit_network(G, delta, remove=False):
     """
     Description
     -----------
@@ -285,12 +288,10 @@ def low_limit_network(G, delta=1., remove=False):
     ----------
     G : networkx.Graph()
         Gives the network that will be modified.
-    delta :  float, optional
-        Set the multiplying constant of the average link weight that will define the weight threshold.
-    remove : bool
-        Tells if the links below the given threshold should be set to zero or removed.
-        The default value is 'False'.
-    
+    delta :  float
+        Set the multiplying constant of the maximum link weight that will define the weight threshold. This number
+        should be between 0 and 1.
+
     Returns
     -------
     output : networkx.Graph()
@@ -298,20 +299,24 @@ def low_limit_network(G, delta=1., remove=False):
     
     Examples
     --------
-    >>> G = xn2v.low_limit_network(G,1.9)
+    >>> print(G)
+    Graph with 300 nodes and 45150 edges
+    >>> G = xn2v.low_limit_network(G, 0.5, remove=True)
+    >>> print(G)
+    Graph with 300 nodes and 14702 edges
     """
     link_weights = nx.get_edge_attributes(G, 'weight')
     weights = np.array(list(link_weights.values())).astype(float)
-    average_weight = np.mean(weights)
+    max_weight = np.amax(weights)
     if remove==True:
         to_remove = []
         for u, v, d in G.edges(data = True):
-            if d['weight'] <= delta * average_weight:
+            if d['weight'] <= delta * max_weight:
                 to_remove.append((u,v))
         G.remove_edges_from(to_remove)
     else:
         for u, v, d in G.edges(data = True):
-            if d['weight'] <= delta * average_weight:
+            if d['weight'] <= delta * max_weight:
                 d['weight'] = 0.
     return G
 
@@ -558,7 +563,7 @@ def recover_points(Z, G, nodes):
         pos += 1
     return np.array(picked_nodes)
 
-def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = False,
+def similar_nodes(G, node=1, picked=10, Epochs = 10, Weight=False, save_model = False,
                   model_name = 'model.wordvectors', graph = None, **kwargs):
     """
     Description
@@ -596,7 +601,7 @@ def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = 
     Epochs : int, optional
         Sets the number of walks that start from the given node. It is strongly suggested to use more than one
         walk.
-        The default value is '30'.
+        The default value is '10'.
     train_time : int, optional
         Sets the number of times we want to apply the algorithm. It is the 'epochs' parameter in Node2Vec.
         The value of this parameter drastically affect the computational time.
