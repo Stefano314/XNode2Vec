@@ -38,7 +38,6 @@ def test_similar_nodes_dimensions():
 def test_similar_nodes_community():
     """
     Checks if the analysis identifies the correct family of the selected node.
-    WARNING: Node2Vec can travel also between two unconnected nodes, I don't know why yet, but it can also be useful.
     """
     r = np.random.randint(4, 8)
     G = nx.balanced_tree(r, 2)
