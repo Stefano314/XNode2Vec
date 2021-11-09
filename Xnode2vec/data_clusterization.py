@@ -50,7 +50,7 @@ def low_limit_network(G, delta, remove=False):
                 d['weight'] = 0.
     return G
   
-  def cluster_generation(result, cluster_rigidity = 0.7):
+def cluster_generation(result, cluster_rigidity = 0.7):
     """
     Description
     -----------
@@ -80,7 +80,7 @@ def low_limit_network(G, delta, remove=False):
     positions = np.where(np.array(result[1]) >= cluster_rigidity)
     return(cluster[positions])
   
-  def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = False,
+def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = False,
                   model_name = 'model.wordvectors', graph = None, **kwargs):
     """
     Description
@@ -178,7 +178,7 @@ def low_limit_network(G, delta, remove=False):
     similarity = np.array(similarity)
     return nodes_id, similarity
   
-  def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **kwargs):
+def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **kwargs):
     """
         Description
         -----------
