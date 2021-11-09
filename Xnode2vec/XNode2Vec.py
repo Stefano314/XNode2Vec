@@ -563,7 +563,7 @@ def recover_points(Z, G, nodes):
         pos += 1
     return np.array(picked_nodes)
 
-def similar_nodes(G, node=1, picked=10, Epochs = 10, Weight=False, save_model = False,
+def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = False,
                   model_name = 'model.wordvectors', graph = None, **kwargs):
     """
     Description
@@ -583,6 +583,10 @@ def similar_nodes(G, node=1, picked=10, Epochs = 10, Weight=False, save_model = 
     q : float
         Sets the probability '1/q' necessary to perform the fastnode2vec random walk. It affects how far the walk
         will go into the network. The smaller it is, the larger will be the distance from the initial node.
+    graph : fastnode2vec.Graph object, optional
+        Tells if the algorithm should perform a **networkx** to **Graph** conversion first, or if it has been already 
+        done.
+        The default value is 'None'.
     node : int, optional
         Sets the node from which to start the analysis. This is a gensim.models.word2vec parameter.
         The default value is '1'.
@@ -597,10 +601,6 @@ def similar_nodes(G, node=1, picked=10, Epochs = 10, Weight=False, save_model = 
     picked : int, optional
         Sets the first 'picked' nodes that are most similar to the node identified with 'node'. This is a
         gensim.models.word2vec parameter.
-        The default value is '10'.
-    Epochs : int, optional
-        Sets the number of walks that start from the given node. It is strongly suggested to use more than one
-        walk.
         The default value is '10'.
     train_time : int, optional
         Sets the number of times we want to apply the algorithm. It is the 'epochs' parameter in Node2Vec.
@@ -636,7 +636,6 @@ def similar_nodes(G, node=1, picked=10, Epochs = 10, Weight=False, save_model = 
       nodes in the network.
     - The rest of the parameters in **kwargs are the ones in fastnode2vec.Node2Vec constructor, I only specified what I
       considered to be the most important ones.
-    - I noticed that the walk_length parameter should be at least #Nodes/2 in order to be a solid walk.
     
     Examples
     --------
@@ -650,24 +649,16 @@ def similar_nodes(G, node=1, picked=10, Epochs = 10, Weight=False, save_model = 
     if graph == None:
         G_fn2v = nx_to_Graph(G, Weight)
         n2v = Node2Vec(G_fn2v, **kwargs)
-        n2v.train(epochs=Epochs)
-        if save_model == True:
-            n2v.save(model_name)
-        nodes = n2v.wv.most_similar(node, topn = picked)
-        nodes_id = list(list(zip(*nodes))[0])
-        similarity = list(list(zip(*nodes))[1])
-        nodes_id = np.array(nodes_id)
-        similarity = np.array(similarity)
     else:
         n2v = Node2Vec(graph, **kwargs)
-        n2v.train(epochs = Epochs)
-        if save_model == True:
-            n2v.save(model_name)
-        nodes = n2v.wv.most_similar(node, topn = picked)
-        nodes_id = list(list(zip(*nodes))[0])
-        similarity = list(list(zip(*nodes))[1])
-        nodes_id = np.array(nodes_id)
-        similarity = np.array(similarity)
+    n2v.train(epochs = Epochs, progress_bar=False)
+    if save_model == True:
+        n2v.save(model_name)
+    nodes = n2v.wv.most_similar(node, topn = picked)
+    nodes_id = list(list(zip(*nodes))[0])
+    similarity = list(list(zip(*nodes))[1])
+    nodes_id = np.array(nodes_id)
+    similarity = np.array(similarity)
     return nodes_id, similarity
     
 def load_model(file):
