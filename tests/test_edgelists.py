@@ -77,3 +77,7 @@ def test_nxedgelist_samenode():
     G = nx.Graph()
     G.add_weighted_edges_from(df)
     assert len(list(G.nodes)) == 1
+    
+def test_from_csv():
+    edgelist = edgelist_from_csv('generic_edgelist.csv')
+    assert edgelist == [('1','2',0.7),('1','4',5),('2','3',3),('2','4',1.7)]
