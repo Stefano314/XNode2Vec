@@ -44,6 +44,18 @@ def test_similar_nodes_dimensions():
     nodes, similarities = similar_nodes(G,node=rand_node,context=5,dim=100,walk_length=int(len(list(G.nodes))/2))
     assert nodes.size == similarities.size
 
+def test_similar_nodes_picked():
+    """
+    Description
+    -----------
+    Test of similar_nodes() function.
+    Checks if the 'picked' parameter returns a vector of dimension 'picked'.
+    """
+    G = nx.generators.balanced_tree(r=3, h=3)
+    rand_picked = np.random.randint(0,10)
+    nodes, similarities = similar_nodes(G, node=1, picked = rand_picked, context=5, dim=40, walk_length=5)
+    assert nodes.size == rand_picked
+
 def test_similar_nodes_community():
     """
     Description
