@@ -2,7 +2,6 @@ import numpy as np
 import networkx as nx
 
 from skspatial.objects import Line
-from scipy.spatial import distance
 
 def best_line_projection(Z):
     """
