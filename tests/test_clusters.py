@@ -93,7 +93,7 @@ def test_clusters_dimension1():
     """
     Tests if the *dim* parameter value is dim = 0 then the cluster won't be expanded.
     """
-    G = nx.generators.balanced_tree(200,1)
+    G = nx.generators.balanced_tree(100,1)
     nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=0.9, spacing=30, dim_fraction=0.,
                                                          picked=int(G.number_of_nodes()/10), dim=100,context=5, walk_length=30)
     assert len(nodes_families)>=1
@@ -103,8 +103,8 @@ def test_clusters_dimension2():
     Tests if the *dim* parameter value is dim > 1 then only one cluster will be generated.
     """
     G = nx.generators.balanced_tree(100,1)
-    nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=0.9, spacing=30, dim_fraction=1.01,
-                                                         picked=int(G.number_of_nodes()/10), dim=100,context=5, walk_length=30)
+    nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=0.7, spacing=30, dim_fraction=1.01,
+                                                         picked=G.number_of_nodes(), dim=100,context=5, walk_length=30)
     assert len(nodes_families)==1
 
 def test_clusters_rigidity1():
@@ -112,17 +112,17 @@ def test_clusters_rigidity1():
     Tests if the *cluster_rigidity* parameter value is cluster_rigidity = 0 then the cluster will contain all the nodes
     in the network.
     """
-    G = nx.generators.balanced_tree(200,1)
+    G = nx.generators.balanced_tree(100,1)
     nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=0., spacing=50, dim_fraction=1.,
                                                          picked=G.number_of_nodes(), dim=100,context=5, walk_length=30)
-    assert nodes_families[0].size == 201
+    assert nodes_families[0].size == 101
 
 def test_clusters_rigidity2():
     """
     Tests if the *cluster_rigidity* parameter value is cluster_rigidity = 1 then the clusters_detection() function will
     raise the Exception about the emptiness of the cluster.
     """
-    G = nx.generators.balanced_tree(200,1)
+    G = nx.generators.balanced_tree(100,1)
     with pytest.raises(Exception):
         nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=1., spacing=50, dim_fraction=0.5,
                                                          picked=G.number_of_nodes(), dim=100,context=5, walk_length=30)
