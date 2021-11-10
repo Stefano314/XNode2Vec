@@ -80,8 +80,8 @@ def cluster_generation(result, cluster_rigidity = 0.7):
     positions = np.where(np.array(result[1]) >= cluster_rigidity)
     return(cluster[positions])
   
-def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = False,
-                  model_name = 'model.wordvectors', graph = None, **kwargs):
+def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, model_name = 'model.wordvectors',
+                  graph = None, **kwargs):
     """
     Description
     -----------
@@ -169,7 +169,7 @@ def similar_nodes(G, node=1, picked=10, Epochs = 30, Weight=False, save_model = 
     else:
         n2v = Node2Vec(graph, **kwargs)
     n2v.train(epochs = Epochs, progress_bar=False)
-    if save_model == True:
+    if model_name != None:
         n2v.save(model_name)
     nodes = n2v.wv.most_similar(node, topn = picked)
     nodes_id = list(list(zip(*nodes))[0])
