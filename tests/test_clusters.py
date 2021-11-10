@@ -50,7 +50,6 @@ def test_similar_nodes_community():
     -----------
     Test of similar_nodes() function.
     Checks if the analysis identifies the correct family of the selected node.
-    WARNING: Node2Vec can travel also between two unconnected nodes.
     """
     r = np.random.randint(4, 8)
     G = nx.balanced_tree(r, 2)
