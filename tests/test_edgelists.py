@@ -40,7 +40,7 @@ def test_stellar_zeroweight():
     rows = np.random.randint(1, 30)
     columns = np.random.randint(1, 30)
     dataset = np.zeros((rows, columns))
-    assert complete_edgelist(dataset).loc[:,'weight'].values.all() == 1.
+    assert stellar_edgelist(dataset).loc[:,'weight'].values.all() == 1.
 
 def test_complete_checktypes():
     """
