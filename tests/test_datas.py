@@ -1,6 +1,7 @@
 import numpy as np
 import networkx as nx
-from Xnode2vec import best_line_projection, low_limit_network
+from Xnode2vec import best_line_projection, low_limit_network, nx_to_Graph
+from fastnode2vec import Graph
 import pytest
 
 def test_line_points():
@@ -61,3 +62,18 @@ def test_low_threshold_remove():
                                ('4', '5', 1.0), ('2', '6', 5.1), ('2', '7', 1.0), ('3', '7', 11)])
     G = low_limit_network(G, delta, remove=True)
     assert not any([G.has_edge('2','4'), G.has_edge('4','5'), G.has_edge('2','7')])
+
+def test_nx_to_Graph():
+    """
+    Description
+    -----------
+    Test of nx_to_Graph() function.
+    Checks if the Graph created by nx_to_Graph() is the same as the one required.
+    """
+    edgelist = [('point1', 'point2', 3.0), ('point1', 'point3', 7.5), ('point1', 'point4', 3.6), ('point2', 'point4', 1.9),
+         ('point4', 'point5', 1.0), ('point2', 'point6', 5.1), ('point2', 'point7', 1.0), ('point3', 'point7', 11)]
+    graph = Graph(edgelist, directed = False, weighted = True) # Expected Graph
+    G = nx.Graph()
+    G.add_weighted_edges_from(edgelist)
+    graph_nx = nx_to_Graph(G, Weight = True) # Obtained Graph
+    assert graph_nx.data == Graph.data
