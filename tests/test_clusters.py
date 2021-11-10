@@ -100,10 +100,10 @@ def test_clusters_dimension1():
 
 def test_clusters_dimension2():
     """
-    Tests if the *dim* parameter value is dim = 1 then only one cluster will be generated.
+    Tests if the *dim* parameter value is dim > 1 then only one cluster will be generated.
     """
-    G = nx.generators.balanced_tree(200,1)
-    nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=0.9, spacing=30, dim_fraction=1.,
+    G = nx.generators.balanced_tree(100,1)
+    nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=0.9, spacing=30, dim_fraction=1.01,
                                                          picked=int(G.number_of_nodes()/10), dim=100,context=5, walk_length=30)
     assert len(nodes_families)==1
 
