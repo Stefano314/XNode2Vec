@@ -2,6 +2,8 @@ import numpy as np
 import networkx as nx
 import pandas as pd
 
+from scipy.spatial import distance
+
 def generate_edgelist(df):
     """
     Description
