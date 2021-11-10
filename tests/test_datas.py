@@ -1,11 +1,13 @@
 import numpy as np
-import pandas as pd
 import networkx as nx
 from Xnode2vec import best_line_projection, low_limit_network
 import pytest
 
 def test_line_points():
     """
+    Description
+    -----------
+    Test of best_line_projection() function.
     Checks if the number of points returned by the best_line_projection() is the same as the original dataset.
     """
     x = np.random.normal(16, 2, 100)
@@ -17,6 +19,9 @@ def test_line_points():
 
 def test_line_dimension():
     """
+    Description
+    -----------
+    Test of best_line_projection() function.
     Checks if the points returned by the best_line_projection() belong to the same space of the original dataset.
     """
     x = np.random.normal(16, 2, 100)
@@ -28,6 +33,9 @@ def test_line_dimension():
 
 def test_low_threshold_zeros():
     """
+    Description
+    -----------
+    Test of low_limit_network() function.
     Checks if all the values below the specified *2.09* threshold are set to zero.
     """
     delta = 0.19
@@ -42,6 +50,9 @@ def test_low_threshold_zeros():
 
 def test_low_threshold_remove():
     """
+    Description
+    -----------
+    Test of low_limit_network() function.
     Checks if all the values below the specified *2.09* threshold are set to zero.
     """
     delta = 0.19
