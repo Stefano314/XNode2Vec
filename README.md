@@ -6,7 +6,7 @@ The original [Node2Vec](https://github.com/aditya-grover/node2vec) algorithm was
 
 Installation
 ------------
-In order to install the Xnode2vec package simply use pip:
+In order to install the **Xnode2vec** package simply use pip:
 
 - ``` pip install Xnode2vec ```
 
@@ -115,7 +115,7 @@ The clustered objects are stored into a list of numpy vectors that are returned 
 Objects Syntax
 --------------
 Here we report the list of structures required to use the Xnode2vec package:
-- Dataset: ``` dataset = np.array([[1,2,3,..], ..., [1,2,3,..]])```; the rows corresponds to each point, while the coulumns to the coordinates.
+- Dataset: ``` dataset = np.array([[1,2,3,..], ..., [1,2,3,..]]) ```; the rows corresponds to each point, while the coulumns to the coordinates.
 - Edge List: ``` edgelist = [(node_a,node_b,weight), ... , (node_c,node_d,weight)] ```; this is a list of tuples, structured as [starting_node, arriving_node, weight]
 - DataFrame: ``` pandas.DataFrame(np.array([[1, 2, 3.7], ..., [2, 7, 12]]), columns=['node1', 'node2', 'weight']) ```
 
@@ -153,6 +153,18 @@ Note
 ----
 - 9/17/2021: I had some issues when installing the fastnode2vec package; in particular, the example given by Louis Abraham gives an error. I noticed that after the installation, the declaration of the file "node2vec.py" wasn't the same as the latest version available on its GitHub (at the moment). My brutal solution was simply to just copy the whole content into the node2vec.py file. This solves the problem.
 - 9/17/2021: Numba requires numpy <= 1.20 in order to work.
+
+Citing
+------
+If you used **XNode2Vec** in your research, please consider citing it as below:
+```
+@software{XNode2Vec,
+  author       = {Stefano Bianchi},
+  title        = {XNode2Vec - An Alternative Data Clustering Procedure},
+  year         = 2021,
+  url          = {https://github.com/Stefano314/Xnode2vec}
+}
+```
 
 # Examples
 ## Generic Applications
