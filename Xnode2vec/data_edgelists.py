@@ -127,7 +127,7 @@ def complete_edgelist(Z, metric='euclidean', stretch=1., info=False, **kwargs):
     """
     dimension = Z[0].size  # Number of coordinates per point
     NPoints = Z[:, 0].size  # Number of points
-    weights = stretch*np.exp(-stretch*distance.cdist(Z, Z, metric))  # Distance between all points
+    weights = stretch*np.exp(-(1/stretch)*distance.cdist(Z, Z, metric))  # Distance between all points
     weights = weights.flatten() # Weights coulumn
     nodes_id = np.arange(NPoints).astype(str)
     node1 = np.repeat(nodes_id,NPoints)
