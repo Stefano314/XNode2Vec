@@ -72,6 +72,19 @@ def test_stellar_zeroweight():
     dataset = np.zeros((rows, columns))
     assert stellar_edgelist(dataset).loc[:,'weight'].values.all() == 1.
 
+def test_stellar_generic_weights():
+    """
+    Description
+    -----------
+    Test of stellar_edgelist() function.
+    Checks if the edgelist has the expected weights.
+    """
+    dataset = np.array([[1,   1,   1],
+                        [3,   2,   1],
+                        [0.2, 0.4, 7]])
+    df = stellar_edgelist(dataset)
+    assert np.array_equal(df['weight'].values, np.exp(-np.linalg.norm(dataset, axis = 1)))
+    
 def test_complete_checktypes():
     """
     Description
