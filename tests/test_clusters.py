@@ -30,6 +30,19 @@ def test_cluster_one_threshold():
     cluster = cluster_generation(result, cluster_rigidity = 1.)
     assert cluster.size == 0
 
+def test_cluster_intermediate_threshold():
+    """
+    Description
+    -----------
+    Test of cluster_generation() function.
+    Checks if the threshold eliminates the expected nodes.
+    """
+    nodes = np.array(['1','2','3',4,5])
+    similarities = np.array([0.8,0.33,0.71,0.98,0.12])
+    result = [nodes, similarities]
+    cluster = cluster_generation(result, cluster_rigidity = 0.5)
+    assert np.array_equal(cluster, ['1','3','4'])
+    
 def test_similar_nodes_dimensions():
     """
     Description
