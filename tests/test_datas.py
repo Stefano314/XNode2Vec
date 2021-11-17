@@ -70,10 +70,11 @@ def test_nx_to_Graph():
     Test of nx_to_Graph() function.
     Checks if the Graph created by nx_to_Graph() is the same as the one required.
     """
-    edgelist = [('point1', 'point2', 3.0), ('point1', 'point3', 7.5), ('point1', 'point4', 3.6), ('point2', 'point4', 1.9),
-         ('point4', 'point5', 1.0), ('point2', 'point6', 5.1), ('point2', 'point7', 1.0), ('point3', 'point7', 11)]
+    edgelist = [('point1', 'point2', 3.0), ('point1', 'point3', 7.5), ('point1', 'point4', 3.6),
+                ('point2', 'point4', 1.9), ('point2', 'point6', 5.1), ('point2', 'point7', 1.0), 
+                ('point3', 'point7', 11), ('point4', 'point5', 1.0)]
     graph = Graph(edgelist, directed = False, weighted = True) # Expected Graph
     G = nx.Graph()
     G.add_weighted_edges_from(edgelist)
-    graph_nx = nx_to_Graph(G, Weight = True) # Obtained Graph
-    assert graph_nx.data == Graph.data
+    graph_nx = nx_to_Graph(G, Weight = True)
+    assert np.array_equal(graph_nx.data, graph.data)
