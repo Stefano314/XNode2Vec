@@ -9,28 +9,14 @@ def test_line_points():
     Description
     -----------
     Test of best_line_projection() function.
-    Checks if the number of points returned by the best_line_projection() is the same as the original dataset.
+    Checks if the transformed dataset has the same number of points and lies in the same space as the original.
     """
     x = np.random.normal(16, 2, 100)
     y = np.random.normal(9, 2.3, 100)
     z = np.random.normal(6, 1, 100)
     dataset = np.column_stack((x, y, z))
     trans_dataset = best_line_projection(dataset)
-    assert dataset.size == trans_dataset.size
-
-def test_line_dimension():
-    """
-    Description
-    -----------
-    Test of best_line_projection() function.
-    Checks if the points returned by the best_line_projection() belong to the same space of the original dataset.
-    """
-    x = np.random.normal(16, 2, 100)
-    y = np.random.normal(9, 2.3, 100)
-    z = np.random.normal(6, 1, 100)
-    dataset = np.column_stack((x, y, z))
-    trans_dataset = best_line_projection(dataset)
-    assert dataset[0].size == trans_dataset[0].size
+    assert dataset.shape == trans_dataset.shape
 
 def test_low_threshold_zeros():
     """
