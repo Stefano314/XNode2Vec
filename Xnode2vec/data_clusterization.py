@@ -251,9 +251,8 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
         if dimension == np.size(current_cluster):
             # Creating new cluster if the dimension of cluster remain the same. This means that the nodes in common are none.
             if dimension == 0: # Stop only if the first cluster is empty.
-                if index == 0: raise Exception("Error: The dimension of the cluster is 0. Try to reduce cluster_rigidity.")
-                else:
-                    warnings.warn("Warning: The dimension of the cluster is 0. You may want to reduce cluster_rigidity.",RuntimeWarning)
+                if index == 0:
+                    warnings.warn("Warning: The dimension of the cluster is 0. You may want to reduce cluster_rigidity.", RuntimeWarning)
                     flag = False
             if flag == True:
                 print("- Creating new cluster")
