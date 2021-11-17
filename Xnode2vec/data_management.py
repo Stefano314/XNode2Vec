@@ -99,7 +99,7 @@ def summary_edgelist(Z, df):
         NPoints = weights.size
         print('Edge list of a stellar network.')
     else:
-        NPoints = int(np.sqrt(weights.size))
+        NPoints = Z[:,0].size
         print('Edge list of a fully connected network.')
     print('- Space dimensionality: ', Z[0].size)
     print('- Number of Points: ', NPoints)
