@@ -64,3 +64,55 @@ def test_nx_to_Graph():
     G.add_weighted_edges_from(edgelist)
     graph_nx = nx_to_Graph(G, Weight = True)
     assert np.array_equal(graph_nx.data, graph.data)
+
+def test_summary_edgelist1():
+    """
+    Description
+    -----------
+    Test of summary_clusters() function, for complete_edgelist().
+    Checks if the output printed is the expected one.
+    """
+    dataset = np.array([[1, 2, 3, 11],
+                        [0.5, 9, 2.4, 9],
+                        [5, 3, 2, 7]])
+    df = complete_edgelist(dataset)
+    old_stdout = sys.stdout
+    new_stdout = io.StringIO()
+    sys.stdout = new_stdout
+    summary_edgelist(dataset,df)
+    output = new_stdout.getvalue()
+    sys.stdout = old_stdout
+    assert output == """\x1b[1m--------- General Information ---------
+Edge list of a fully connected network.
+- Space dimensionality:  4
+- Number of Points:  3
+- Minimum weight:  0.0
+- Maximum weight:  0.002935281570570076
+- Average weight:  0.0008927563147689381
+- Weight Variance:  1.2541199053237623e-06\n"""
+
+def test_summary_edgelist2():
+    """
+    Description
+    -----------
+    Test of summary_clusters() function, for stellar_edgelist().
+    Checks if the output printed is the expected one.
+    """
+    dataset = np.array([[1, 2, 3, 11],
+                        [0.5, 9, 2.4, 9],
+                        [5, 3, 2, 7]])
+    df = stellar_edgelist(dataset)
+    old_stdout = sys.stdout
+    new_stdout = io.StringIO()
+    sys.stdout = new_stdout
+    summary_edgelist(dataset,df)
+    output = new_stdout.getvalue()
+    sys.stdout = old_stdout
+    assert output == """\x1b[1m--------- General Information ---------
+Edge list of a stellar network.
+- Space dimensionality:  4
+- Number of Points:  3
+- Minimum weight:  2.3481866887962857e-06
+- Maximum weight:  8.895507836838607e-05
+- Average weight:  3.3432430173058003e-05
+- Weight Variance:  1.548743426810968e-09\n"""
