@@ -46,6 +46,20 @@ def test_complete_zeroweight():
     assert counts[0] == rows # Number of self links
     assert counts[1] == rows**2 - rows # The rest of the links
 
+def test_complete_different_metrics():
+    """
+    Description
+    -----------
+    Test of complete_edgelist() function.
+    Checks if the weights assigned by two different metrics are different.
+    """
+    dataset = np.array([[1,   1,   1],
+                        [3,   2,   1],
+                        [0.2, 0.4, 7]])
+    df1 = complete_edgelist(dataset, metric='jaccard')
+    df2 = complete_edgelist(dataset, metric='euclidean')
+    assert not np.array_equal(df1['weight'].values, df2['weight'].values)
+    
 def test_stellar_zeroweight():
     """
     Description
