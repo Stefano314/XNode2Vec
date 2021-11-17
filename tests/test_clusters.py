@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from Xnode2vec import cluster_generation, clusters_detection, similar_nodes, recover_points
+
+from Xnode2vec import complete_edgelist, generate_edgelist, clusters_detection
 import pytest
 
 def test_cluster_zero_threshold():
@@ -156,6 +158,30 @@ def test_clusters_dimension2():
                                                          picked=int(G.number_of_nodes()), dim=100,context=5, walk_length=30)
     assert len(nodes_families)==1
 
+def test_clusters_intermediate():
+    """
+    Description
+    -----------
+    Test of clusters_detection() function.
+    Tests if the algorithm can detect two very different families.
+    """
+    x1 = np.random.normal(4, 1, 20)
+    y1 = np.random.normal(5, 1, 20)
+    x2 = np.random.normal(17, 1, 20)
+    y2 = np.random.normal(13, 1, 20)
+    family1 = np.column_stack((x1, y1))
+    family2 = np.column_stack((x2, y2))
+    dataset = np.concatenate((family1, family2), axis = 0)
+    df = complete_edgelist(dataset, metric = 'euclidean')
+    eedgelist = generate_edgelist(df)
+    G = nx.Graph()
+    G.add_weighted_edges_from(eedgelist)
+    nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity = 0.9, spacing = 2,
+                                                         dim_fraction = 0.5, picked = G.number_of_nodes(),
+                                                         dim = 50, context = 15, Epochs = 10, walk_length = 25,
+                                                         Weight = True)
+    assert len(nodes_families) == 2
+    
 def test_clusters_rigidity1():
     """
     Description
