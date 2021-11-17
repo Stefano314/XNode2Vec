@@ -35,12 +35,16 @@ def test_complete_zeroweight():
     Description
     -----------
     Test of complete_edgelist() function.
-    Checks if the weights of a dataset with zero distance between all the points is 1.
+    Checks if the weights of a dataset with zero distance between all the points is 1, except for the self links that
+    must be 0.
     """
     rows = np.random.randint(1, 30)
     columns = np.random.randint(1, 30)
-    dataset = np.zeros((rows, columns))
-    assert complete_edgelist(dataset).loc[:,'weight'].values.all() == 1.
+    dataset = np.ones((rows, columns))
+    df = complete_edgelist(dataset)
+    unique, counts = np.unique(df['weight'].values, return_counts = True)
+    assert counts[0] == rows # Number of self links
+    assert counts[1] == rows**2 - rows # The rest of the links
 
 def test_stellar_zeroweight():
     """
