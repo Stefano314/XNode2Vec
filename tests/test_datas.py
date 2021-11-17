@@ -116,3 +116,28 @@ Edge list of a stellar network.
 - Maximum weight:  8.895507836838607e-05
 - Average weight:  3.3432430173058003e-05
 - Weight Variance:  1.548743426810968e-09\n"""
+
+def test_summary_clusters():
+    """
+    Description
+    -----------
+    Test of summary_clusters() function.
+    Checks if the output printed is the expected one.
+    """
+    cl1 = np.array(['a', 'b', '4'], dtype = object)
+    cl2 = np.array(['3', 'y', 'x', '11'], dtype = object)
+    clustered = [cl1, cl2]
+    unclustered = np.array(['2', '7', 'n', 'c'], dtype = object)
+    old_stdout = sys.stdout
+    new_stdout = io.StringIO()
+    sys.stdout = new_stdout
+    summary_clusters(clustered, unclustered)
+    output = new_stdout.getvalue()
+    sys.stdout = old_stdout
+    assert output=="""\033[1m--------- Clusters Information ---------
+- Number of Clusters: 2
+- Total nodes: 11
+- Clustered nodes:  7
+- Number of unlabeled nodes: 4
+- Nodes in cluster 1: 3
+- Nodes in cluster 2: 4\n"""
