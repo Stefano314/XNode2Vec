@@ -46,6 +46,23 @@ def test_complete_zeroweight():
     assert counts[0] == rows # Number of self links
     assert counts[1] == rows**2 - rows # The rest of the links
 
+def test_complete_generic_weights():
+    """
+    Description
+    -----------
+    Test of complete_edgelist() function.
+    Checks if the edgelist has the expected weights.
+    """
+    dataset = np.array([[1,   1,   1],
+                        [3,   2,   1],
+                        [0.2, 0.4, 7]])
+    distances = distance.cdist(dataset, dataset, 'euclidean')
+    distances = np.exp(-distances)
+    np.fill_diagonal(distances, 0)
+    distances = distances.flatten()
+    df = complete_edgelist(dataset, metric='euclidean')
+    assert np.array_equal(df['weight'].values, distances)
+    
 def test_complete_different_metrics():
     """
     Description
