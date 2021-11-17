@@ -60,6 +60,40 @@ def labels_modifier(G, new_ids):
     new_G = nx.relabel_nodes(G, mapping)
     return new_G
 
+def summary_edgelist(Z, df):
+    """
+    Description
+    -----------
+    Prints the information related to the created edgelist and on the initial dataset. At the moment it can work with
+    complete_edgelist() and stellar_edgelist() format.
+    
+    Parameters
+    ----------
+    Z : numpy ndarray
+        Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
+        are the coordinates.
+    df :  pandas.DataFrame
+        Pandas dataframe of the created network edgelist.
+         
+    Returns
+    -------
+    output : pandas DataFrame
+        Edge list created from the given dataset expressed as a Pandas DataFrame.
+        
+    Examples
+    --------
+    >>> df = xn2v.complete_edgelist(dataset)
+    >>> summary_edgelist(dataset, df)
+    --------- General Information ---------
+    Edge list of a fully connected network.
+    - Space dimensionality:  2
+    - Number of Points:  200
+    - Minimum weight:  0.045748493312814414
+    - Maximum weight:  1.0
+    - Average weight:  0.35927027586880667
+    - Weight Variance:  0.050680400543201824
+    """
+    
 def summary_clusters(clusters, unlabeled):
     """
     Description
