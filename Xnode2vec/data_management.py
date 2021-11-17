@@ -66,7 +66,7 @@ def summary_edgelist(Z, df):
     -----------
     Prints the information related to the created edgelist and on the initial dataset. At the moment it can work with
     complete_edgelist() and stellar_edgelist() format.
-    
+
     Parameters
     ----------
     Z : numpy ndarray
@@ -74,12 +74,12 @@ def summary_edgelist(Z, df):
         are the coordinates.
     df :  pandas.DataFrame
         Pandas dataframe of the created network edgelist.
-         
+
     Returns
     -------
     output : pandas DataFrame
         Edge list created from the given dataset expressed as a Pandas DataFrame.
-        
+
     Examples
     --------
     >>> df = xn2v.complete_edgelist(dataset)
@@ -93,6 +93,20 @@ def summary_edgelist(Z, df):
     - Average weight:  0.35927027586880667
     - Weight Variance:  0.050680400543201824
     """
+    weights = df['weight'].values
+    print('\033[1m' + '--------- General Information ---------')
+    if df.iloc[0][0] == 'origin':
+        NPoints = weights.size
+        print('Edge list of a stellar network.')
+    else:
+        NPoints = int(np.sqrt(weights.size))
+        print('Edge list of a fully connected network.')
+    print('- Space dimensionality: ', Z[0].size)
+    print('- Number of Points: ', NPoints)
+    print('- Minimum weight: ', np.min(weights))
+    print('- Maximum weight: ', np.max(weights))
+    print('- Average weight: ', np.mean(weights))
+    print('- Weight Variance: ', np.var(weights))
     
 def summary_clusters(clusters, unlabeled):
     """
