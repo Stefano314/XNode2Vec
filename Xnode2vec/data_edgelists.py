@@ -136,15 +136,7 @@ def complete_edgelist(Z, metric='euclidean', stretch=1., info=False, **kwargs):
     node2 = np.tile(nodes_id,NPoints)
     df = pd.DataFrame({'node1': node1, 'node2': node2, 'weight': weights}, **kwargs)
     if info == True:
-        print('\033[1m' + '--------- General Information ---------')
-        print('Edge list of a fully connected network.')
-        print('The weights are calculated using minus the exponential of the norm defined by the chosen metric.\n')
-        print('- Space dimensionality: ', dimension)
-        print('- Number of Points: ', NPoints)
-        print('- Minimum weight: ', np.min(weights))
-        print('- Maximum weight: ', np.max(weights))
-        print('- Average weight: ', np.mean(weights))
-        print('- Weight Variance: ', np.var(weights))
+        summary_edgelist(Z, df)
     return df
 
 def stellar_edgelist(Z, info=False, **kwargs):
@@ -204,14 +196,6 @@ def stellar_edgelist(Z, info=False, **kwargs):
     node2 = np.arange(NPoints).astype(str)
     df = pd.DataFrame({'node1': 'origin', 'node2': node2, 'weight': weights}, **kwargs)
     if info == True:
-        print('\033[1m' + '--------- General Information ---------')
-        print('Edge list of a stellar network.')
-        print('The weights are calculated using minus the exponential of the euclidean norm.\n')
-        print('- Space dimensionality: ', dimension)
-        print('- Number of Points: ', NPoints)
-        print('- Minimum weight: ', np.min(weights))
-        print('- Maximum weight: ', np.max(weights))
-        print('- Average weight: ', np.mean(weights))
-        print('- Weight Variance: ', np.var(weights))
+        summary_edgelist(Z, df)
     return df
   
