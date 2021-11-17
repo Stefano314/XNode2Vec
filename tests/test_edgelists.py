@@ -78,14 +78,14 @@ def test_complete_stretch():
     Description
     -----------
     Test of complete_edgelist() function.
-    Checks if the assigned weights are all 0 if 'stretch' parameter is 0. The expected vector has dimension 'row**2',
-    since it represents a completely connected network.
+    Checks if the assigned weights are all 0 if 'stretch' parameter is 0.0001 -- zero. The expected vector has dimension
+     'row**2', since it represents a completely connected network.
     """
     rows = np.random.randint(1, 30)
     columns = np.random.randint(1, 10)
     dataset = np.random.rand(rows, columns)
-    df = complete_edgelist(dataset, stretch = 0)
-    assert np.array_equal(df['weight'].values, np.zeros(rows**2))
+    df = complete_edgelist(dataset, stretch = 0.0001)
+    assert np.array_equal(np.round(df['weight'].values, decimals = 20), np.zeros(rows**2))
     
 def test_stellar_checktypes():
     """
