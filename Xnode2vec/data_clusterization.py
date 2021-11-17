@@ -275,12 +275,6 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
             pass
     tot_nodes = [val for sublist in clusters for val in sublist]  # Flatten list of lists
     unlabeled = list(set(np.array(list(G.nodes)).astype(str)) - set(tot_nodes))  # Get remaining nodes
-    print('\033[1m' + '--------- Clusters Information ---------')
-    print('- Number of Clusters: ', index)
-    print('- Total nodes: ', len(tot_nodes) + len(unlabeled))
-    print('- Clustered nodes: ', len(tot_nodes))
-    print('- Number of unlabeled nodes: ', len(unlabeled))
-    for i in range(0,len(clusters)):
-        print(f"- Nodes in cluster {i+1}:", clusters[i].size)
+    summary_clusters(clusters, unlabeled) # Printing results.
     return clusters, unlabeled
   
