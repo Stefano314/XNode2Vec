@@ -69,7 +69,7 @@ def test_summary_edgelist1():
     """
     Description
     -----------
-    Test of summary_clusters() function, for complete_edgelist().
+    Test of summary_edgelist() function, for complete_edgelist().
     Checks if the output printed is the expected one.
     """
     dataset = np.array([[1, 2, 3, 11],
@@ -95,7 +95,7 @@ def test_summary_edgelist2():
     """
     Description
     -----------
-    Test of summary_clusters() function, for stellar_edgelist().
+    Test of summary_edgelist() function, for stellar_edgelist().
     Checks if the output printed is the expected one.
     """
     dataset = np.array([[1, 2, 3, 11],
