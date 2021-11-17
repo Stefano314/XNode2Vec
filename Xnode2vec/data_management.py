@@ -47,10 +47,6 @@ def labels_modifier(G, new_ids):
     -------
     output : networkx.Graph()
         Returns the same networkx graph() with the new labels.
-        
-    Note
-    ----
-    - The number of nodes and edges of the original network won't change. Only specific weight values will be set to 0.
     
     Examples
     --------
@@ -63,6 +59,44 @@ def labels_modifier(G, new_ids):
     mapping = dict(zip(G, new_ids))
     new_G = nx.relabel_nodes(G, mapping)
     return new_G
+
+def summary_clusters(clusters, unlabeled):
+    """
+    Description
+    -----------
+    Print the information obtained after the data clusterization analysis.
+    
+    Parameters
+    ----------
+    clusters : list
+        First value returned by clusters_detection() function. Contains all the clusters
+        found by the algorithm.
+    unlabeled : list
+        Second value returned by clusters_detection() function. Contains all the unlabeled nodes.
+    
+    Examples
+    --------
+    >>> nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, cluster_rigidity = 0.5, spacing = 20, 
+    >>>                                                           dim_fraction = 1., Epochs=3, dim=50,
+    >>>                                                           picked=G.number_of_nodes(), Weight=True, 
+    >>>                                                           context=20, walk_length=100)
+    >>> xn2v.summary_clusters(nodes_families, unlabeled_nodes)
+    --------- Clusters Information ---------
+    - Number of Clusters: 2
+    - Total nodes: 200
+    - Clustered nodes: 181
+    - Number of unlabeled nodes: 19
+    - Nodes in cluster 1: 81
+    - Nodes in cluster 2: 100
+    """
+    tot_nodes = len([val for sublist in clusters for val in sublist])
+    print('\033[1m' + '--------- Clusters Information ---------')
+    print('- Number of Clusters:', len(clusters))
+    print('- Total nodes:', tot_nodes + len(unlabeled))
+    print('- Clustered nodes: ', tot_nodes)
+    print('- Number of unlabeled nodes:', len(unlabeled))
+    for i in range(0, len(clusters)):
+        print(f"- Nodes in cluster {i + 1}:", clusters[i].size)
 
 def load_model(file):
     """
