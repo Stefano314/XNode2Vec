@@ -4,6 +4,8 @@ import pandas as pd
 
 from scipy.spatial import distance
 
+from .data_management import summary_edgelist
+
 def generate_edgelist(df):
     """
     Description
