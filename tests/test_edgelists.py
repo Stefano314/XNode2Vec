@@ -69,9 +69,9 @@ def test_complete_checktypes():
     columns = np.random.randint(1, 30)
     dataset = np.zeros((rows, columns))
     df = complete_edgelist(dataset)
-    assert (all(isinstance(item, str) for item in df['node1'].values),
-            all(isinstance(item, str) for item in df['node2'].values),
-            all(isinstance(item, float) for item in df['weight'].values)) == (True,True,True)
+    assert all(isinstance(item, str) for item in df['node1'].values)
+    assert all(isinstance(item, str) for item in df['node2'].values)
+    assert all(isinstance(item, float) for item in df['weight'].values)
 
 def test_complete_stretch():
     """
@@ -98,9 +98,9 @@ def test_stellar_checktypes():
     columns = np.random.randint(1, 30)
     dataset = np.zeros((rows, columns))
     df = stellar_edgelist(dataset)
-    assert (all(isinstance(item, str) for item in df['node1'].values),
-            all(isinstance(item, str) for item in df['node2'].values),
-            all(isinstance(item, float) for item in df['weight'].values)) == (True, True, True)
+    assert all(isinstance(item, str) for item in df['node1'].values)
+    assert all(isinstance(item, str) for item in df['node2'].values)
+    assert all(isinstance(item, float) for item in df['weight'].values)
 
 def test_nxedgelist_samenode():
     """
