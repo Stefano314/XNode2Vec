@@ -155,16 +155,3 @@ def test_clusters_rigidity1():
     nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=0., spacing=50, dim_fraction=1.,
                                                          picked=G.number_of_nodes(), dim=100,context=5, walk_length=30)
     assert nodes_families[0].size == 101
-
-def test_clusters_rigidity2():
-    """
-    Description
-    -----------
-    Test of clusters_detection() function.
-    Tests if the *cluster_rigidity* parameter value is cluster_rigidity = 1 then the clusters_detection() function will
-    raise the Exception about the emptiness of the cluster.
-    """
-    G = nx.generators.balanced_tree(100,1)
-    with pytest.raises(Exception):
-        nodes_families, unlabeled_nodes = clusters_detection(G, cluster_rigidity=1., spacing=50, dim_fraction=0.5,
-                                                         picked=G.number_of_nodes(), dim=100,context=5, walk_length=30)
