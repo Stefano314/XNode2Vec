@@ -2,7 +2,11 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from Xnode2vec import complete_edgelist, stellar_edgelist, generate_edgelist, edgelist_from_csv
+
 import pytest
+from hypothesis import given, strategies as st
+
+np.random.seed(42)
 
 def test_complete_dimension():
     """
