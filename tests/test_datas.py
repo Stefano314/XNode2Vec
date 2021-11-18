@@ -4,6 +4,8 @@ from Xnode2vec import best_line_projection, low_limit_network, nx_to_Graph
 from fastnode2vec import Graph
 import pytest
 
+np.random.seed(42)
+
 def test_line_points():
     """
     Description
