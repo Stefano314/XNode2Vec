@@ -17,7 +17,36 @@ def test_line_points():
     dataset = np.column_stack((x, y, z))
     trans_dataset = best_line_projection(dataset)
     assert dataset.shape == trans_dataset.shape
+    
+def test_line_aligned():
+    """
+    Description
+    -----------
+    Test of best_line_projection() function.
+    Checks if the points are already on a line, the transformed dataset remains the same.
+    """
+    x = np.array([1., 2., 3.])
+    y = np.array([2., 3., 4.])
+    points = np.column_stack((x, y))
+    transf_points = best_line_projection(points)
+    assert np.array_equal(points, transf_points)
 
+def test_line_ld():
+    """
+    Description
+    -----------
+    Test of best_line_projection() function.
+    Checks if the transformed vectors are linearly dependent, by transforming again the dataset and checking if it
+    doesn't change. This is fine, since we tested that if the points are alligned, then the transformed dataset won't
+    change.
+    """
+    x = np.array([1., 2., 4.])
+    y = np.array([2., 3., 11.])
+    points = np.column_stack((x, y))
+    transf_points = np.round(best_line_projection(points), 10)
+    new_trasf = np.round(best_line_projection(transf_points), 10)
+    assert np.array_equal(transf_points, new_trasf)
+    
 def test_low_threshold_zeros():
     """
     Description
