@@ -4,9 +4,12 @@ import networkx as nx
 from Xnode2vec import cluster_generation, clusters_detection, similar_nodes, recover_points
 
 from Xnode2vec import complete_edgelist, generate_edgelist, clusters_detection
+
+from hypothesis import given, strategies as st
 import pytest
 
-def test_cluster_zero_threshold():
+@given(st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1))
+def test_cluster_zero_threshold(x1,x2,x3,x4,x5):
     """
     Description
     -----------
@@ -14,7 +17,7 @@ def test_cluster_zero_threshold():
     Checks if giving a 0 similarity threshold value will give back the whole vector.
     """
     nodes = np.array(['1','2','3',4,5])
-    similarities = np.random.rand(nodes.size)
+    similarities = np.array([x1,x2,x3,x4,x5])
     result = [nodes, similarities]
     cluster = cluster_generation(result, cluster_rigidity = 0.)
     assert np.array_equal(nodes,cluster)
