@@ -8,6 +8,8 @@ from Xnode2vec import complete_edgelist, generate_edgelist, clusters_detection
 from hypothesis import given, strategies as st
 import pytest
 
+np.random.seed(42)
+
 @given(st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1))
 def test_cluster_zero_threshold(x1,x2,x3,x4,x5):
     """
