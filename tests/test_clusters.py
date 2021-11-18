@@ -22,7 +22,8 @@ def test_cluster_zero_threshold(x1,x2,x3,x4,x5):
     cluster = cluster_generation(result, cluster_rigidity = 0.)
     assert np.array_equal(nodes,cluster)
 
-def test_cluster_one_threshold():
+@given(st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1))
+def test_cluster_one_threshold(x1,x2,x3,x4,x5):
     """
     Description
     -----------
@@ -30,7 +31,7 @@ def test_cluster_one_threshold():
     Checks if giving a 1 similarity threshold value will give back an empty vector.
     """
     nodes = np.array(['1','2','3',4,5])
-    similarities = np.random.rand(nodes.size)
+    similarities = np.array([x1,x2,x3,x4,x5])
     result = [nodes, similarities]
     cluster = cluster_generation(result, cluster_rigidity = 1.)
     assert cluster.size == 0
