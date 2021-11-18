@@ -56,11 +56,8 @@ def test_similar_nodes_dimensions():
     Test of similar_nodes() function.
     Checks if the dimensions of nodes and similarities are the same.
     """
-    r = np.random.randint(1,6)
-    h = np.random.randint(1,6)
-    G = nx.generators.balanced_tree(r=r, h=h)
-    rand_node = np.random.randint(0, len(list(G.nodes)))
-    nodes, similarities = similar_nodes(G,node=rand_node,context=5,dim=100,walk_length=int(len(list(G.nodes))/2))
+    G = nx.generators.balanced_tree(r = 3, h = 3)
+    nodes, similarities = similar_nodes(G,context=5,dim=4,walk_length=3)
     assert nodes.size == similarities.size
 
 def test_similar_nodes_picked():
