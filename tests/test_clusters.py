@@ -72,14 +72,14 @@ def test_similar_nodes_picked(rand_picked):
     nodes, similarities = similar_nodes(G, picked = rand_picked, context=5, dim=40, walk_length=5)
     assert nodes.size == similarities.size
 
-def test_similar_nodes_community():
+@given(st.sampled_from([4,5,6,7,8]))
+def test_similar_nodes_community(r):
     """
     Description
     -----------
     Test of similar_nodes() function.
     Checks if the analysis identifies the correct family of the selected node.
     """
-    r = np.random.randint(4, 8)
     G = nx.balanced_tree(r, 2)
     G.remove_node(0)
     nodes, similarities = similar_nodes(G, node = 2, picked = r, context = 5, dim = 100, walk_length = 15)
