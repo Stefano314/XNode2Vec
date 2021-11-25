@@ -116,19 +116,6 @@ def test_complete_checktypes(rows, columns):
     assert all(isinstance(item, str) for item in df['node1'].values)
     assert all(isinstance(item, str) for item in df['node2'].values)
     assert all(isinstance(item, float) for item in df['weight'].values)
-
-@given(st.integers(2,30),st.integers(2,30))
-def test_complete_stretch(rows, columns):
-    """
-    Description
-    -----------
-    Test of complete_edgelist() function.
-    Checks if the assigned weights are all 0 if 'stretch' parameter is 0.0001 -- zero. The expected vector has dimension
-     'row**2', since it represents a completely connected network.
-    """
-    dataset = np.random.rand(rows, columns)
-    df = complete_edgelist(dataset, stretch = 0.0001)
-    assert np.array_equal(np.round(df['weight'].values, decimals = 10), np.zeros(rows**2))
     
 @given(st.integers(2,30),st.integers(2,30))
 def test_stellar_checktypes(rows, columns):
