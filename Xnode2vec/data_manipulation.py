@@ -92,10 +92,10 @@ def recover_points(Z, G, nodes):
     # Check dimensionality
     if np.array(G.nodes)[0] == 'origin':
         if Z[:,0].size+1 != np.array(G.nodes).size:
-            raise Exception(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one expected for the network dim={np.array(G.nodes).size}.")
+            raise ValueError(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one expected for the network dim={np.array(G.nodes).size}.")
         else: Z = np.insert(Z, 0, np.zeros(Z[0].size), axis=0) # Adding origin
     elif Z[:,0].size != np.array(G.nodes).size:
-            raise Exception(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one of the network dim={np.array(G.nodes).size}.")
+            raise ValueError(f"Error: the dataset dimension dim={Z[:, 0].size} is different from the one of the network dim={np.array(G.nodes).size}.")
     # Force string type
     nodes = [str(s) for s in nodes]
     picked_nodes = []
