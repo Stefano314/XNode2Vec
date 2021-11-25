@@ -8,8 +8,6 @@ from Xnode2vec import complete_edgelist, generate_edgelist, clusters_detection
 from hypothesis import given, strategies as st
 import pytest
 
-np.random.seed(42)
-
 @given(st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1))
 def test_cluster_zero_threshold(x1,x2,x3,x4,x5):
     """
@@ -121,6 +119,7 @@ def test_recover_picked_nodes_permutation():
     since the sorting order of the picked nodes is generally different when performing a different simulation on the
     same dataset.
     """
+    np.random.seed(42)
     dataset = np.array([[1,2,3,4], #point1
                         [7.2,3,4.1,9], #point2
                         [6,7,8,9], #point3
@@ -168,6 +167,7 @@ def test_clusters_intermediate():
     Test of clusters_detection() function.
     Tests if the algorithm can detect two very different families.
     """
+    np.random.seed(42)
     x1 = np.random.normal(4, 1, 20)
     y1 = np.random.normal(5, 1, 20)
     x2 = np.random.normal(17, 1, 20)
