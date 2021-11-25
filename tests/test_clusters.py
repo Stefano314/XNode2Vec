@@ -165,7 +165,7 @@ def test_clusters_intermediate():
     Description
     -----------
     Test of clusters_detection() function.
-    Tests if the algorithm can detect two very different families.
+    Tests if the algorithm can detect two very different families and if the nodes are the expected ones.
     """
     np.random.seed(42)
     x1 = np.random.normal(4, 1, 20)
@@ -183,7 +183,11 @@ def test_clusters_intermediate():
                                                          dim_fraction = 0.5, picked = G.number_of_nodes(),
                                                          dim = 50, context = 15, Epochs = 10, walk_length = 25,
                                                          Weight = True)
-    assert len(nodes_families) == 2
+    checker1 = np.arange(0,20).astype(str)
+    checker2 = np.arange(20,40).astype(str)
+    assert len(unlabeled_nodes) == 0
+    assert all(np.isin(nodes_families[0], checker1))
+    assert all(np.isin(nodes_families[1], checker2))
     
 def test_clusters_rigidity1():
     """
