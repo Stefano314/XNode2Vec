@@ -41,7 +41,7 @@ def generate_edgelist(df):
     # Check header:
     header_names = list(df.columns.values)
     if header_names[0] != 'node1' or header_names[1] != 'node2' or header_names[2] != 'weight':
-        raise TypeError('The header format is different from the required one.')
+        raise ValueError('The header format is different from the required one.')
     # Forcing values type
     df = df.astype({'node1': str, 'node2': str, 'weight': np.float64})
     return list(df.itertuples(index = False, name = None))
@@ -81,7 +81,7 @@ def edgelist_from_csv(path, **kwargs):
     # Check header:
     header_names = list(df_csv.columns.values)
     if header_names[0] != 'node1' or header_names[1] != 'node2' or header_names[2] != 'weight':
-        raise TypeError('The header format is different from the required one.')
+        raise ValueError('The header format is different from the required one.')
     return list(df_csv.itertuples(index = False, name = None))
 
 def complete_edgelist(Z, metric='euclidean', stretch=1., info=False, **kwargs):
