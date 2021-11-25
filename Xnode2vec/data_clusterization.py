@@ -250,8 +250,7 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
                 current_cluster = current_cluster[~np.in1d(current_cluster,previous_cluster)] # current_cluster filtering.
         if dimension == np.size(current_cluster):
             # Creating new cluster if the dimension of cluster remain the same. This means that the nodes in common are none.
-            if dimension == 0: # Stop only if the first cluster is empty.
-                if index == 0:
+            if dimension == 0: # If the current cluster is empty, skip the process.
                     warnings.warn("Warning: The dimension of the cluster is 0. You may want to reduce cluster_rigidity.", RuntimeWarning)
                     flag = False
             if flag == True:
