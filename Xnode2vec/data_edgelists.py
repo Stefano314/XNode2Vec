@@ -17,7 +17,11 @@ def generate_edgelist(df):
     ----------
     df : pandas.DataFrame
         Pandas DataFrame edge list of the wanted network.
-        
+    
+    Raises
+    ------
+    ValueError : An error is raised if the values of the DataFrame headers is not the required one.
+    
     Returns
     -------
     output : list
@@ -58,6 +62,10 @@ def edgelist_from_csv(path, **kwargs):
     path : string
         Path or name of the .csv file to be loaded.
     **kwargs :  pandas.read_csv() arguments
+    
+    Raises
+    ------
+    ValueError : An error is raised if the values of the DataFrame headers is not the required one.
     
     Returns
     -------
