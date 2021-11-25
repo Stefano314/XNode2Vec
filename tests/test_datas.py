@@ -4,8 +4,6 @@ from Xnode2vec import best_line_projection, low_limit_network, nx_to_Graph
 from fastnode2vec import Graph
 import pytest
 
-np.random.seed(42)
-
 def test_line_points():
     """
     Description
@@ -13,6 +11,7 @@ def test_line_points():
     Test of best_line_projection() function.
     Checks if the transformed dataset has the same number of points and lies in the same space as the original.
     """
+    np.random.seed(42)
     x = np.random.normal(16, 2, 100)
     y = np.random.normal(9, 2.3, 100)
     z = np.random.normal(6, 1, 100)
