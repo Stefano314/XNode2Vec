@@ -8,30 +8,29 @@ from Xnode2vec import complete_edgelist, generate_edgelist, clusters_detection
 from hypothesis import given, strategies as st
 import pytest
 
-@given(st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1))
-def test_cluster_zero_threshold(x1,x2,x3,x4,x5):
+@given(arrays(np.float32, shape = 5, elements=st.floats(0., 1., width=32)))
+def test_cluster_zero_threshold(similarities):
     """
     Description
     -----------
     Test of cluster_generation() function.
     Checks if giving a 0 similarity threshold value will give back the whole vector.
     """
-    nodes = np.array(['1','2','3',4,5])
-    similarities = np.array([x1,x2,x3,x4,x5])
+    nodes = np.array(['1', '2', '3', 4, 5])
     result = [nodes, similarities]
     cluster = cluster_generation(result, cluster_rigidity = 0.)
-    assert np.array_equal(nodes,cluster)
+    assert np.array_equal(nodes, cluster)
 
-@given(st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1),st.floats(0,1))
-def test_cluster_one_threshold(x1,x2,x3,x4,x5):
+
+@given(arrays(np.float32, shape = 5, elements=st.floats(0., 1., width=32)))
+def test_cluster_one_threshold(similarities):
     """
     Description
     -----------
     Test of cluster_generation() function.
     Checks if giving a 1 similarity threshold value will give back an empty vector.
     """
-    nodes = np.array(['1','2','3',4,5])
-    similarities = np.array([x1,x2,x3,x4,x5])
+    nodes = np.array(['1', '2', '3', 4, 5])
     result = [nodes, similarities]
     cluster = cluster_generation(result, cluster_rigidity = 1.)
     assert cluster.size == 0
