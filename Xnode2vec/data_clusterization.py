@@ -6,7 +6,7 @@ import networkx as nx
 import warnings
 from tqdm import tqdm
 
-from .data_management import nx_to_Graph, summary_clusters
+from .data_management import nx_to_Graph
 
 def low_limit_network(G, delta, remove=False):
     """
