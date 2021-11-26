@@ -4,8 +4,6 @@ import pandas as pd
 
 from scipy.spatial import distance
 
-from .data_management import summary_edgelist
-
 def generate_edgelist(df):
     """
     Description
@@ -92,7 +90,7 @@ def edgelist_from_csv(path, **kwargs):
         raise ValueError('The header format is different from the required one.')
     return list(df_csv.itertuples(index = False, name = None))
 
-def complete_edgelist(Z, metric='euclidean', stretch=1., info=False, **kwargs):
+def complete_edgelist(Z, metric='euclidean', **kwargs):
     """
     Description
     -----------
@@ -107,11 +105,6 @@ def complete_edgelist(Z, metric='euclidean', stretch=1., info=False, **kwargs):
     metric : string, optional
         Specifies the metric in which the dataset Z is defined. The metric will determine the values of the weights
         between the links.
-    stretch : float, optional
-        Enlarges the distance between different points exponentially.
-        The default value is '1.0'.
-    info :  bool
-        Flag to print out some generic information of the dataset.
         
     Returns
     -------
@@ -144,11 +137,9 @@ def complete_edgelist(Z, metric='euclidean', stretch=1., info=False, **kwargs):
     node1 = np.repeat(nodes_id,NPoints)
     node2 = np.tile(nodes_id,NPoints)
     df = pd.DataFrame({'node1': node1, 'node2': node2, 'weight': weights}, **kwargs)
-    if info == True:
-        summary_edgelist(Z, df)
     return df
 
-def stellar_edgelist(Z, info=False, **kwargs):
+def stellar_edgelist(Z, **kwargs):
     """
     Description
     -----------
@@ -160,8 +151,6 @@ def stellar_edgelist(Z, info=False, **kwargs):
     Z : numpy ndarray
         Numpy array containing as columns the i-th coordinate of the k-th point. The rows are the points, the columns
         are the coordinates.
-    info :  bool
-        Flag to print out some generic information of the dataset.
         
     Returns
     -------
@@ -204,7 +193,5 @@ def stellar_edgelist(Z, info=False, **kwargs):
     weights = np.exp(-np.linalg.norm(Z, axis = 1))
     node2 = np.arange(NPoints).astype(str)
     df = pd.DataFrame({'node1': 'origin', 'node2': node2, 'weight': weights}, **kwargs)
-    if info == True:
-        summary_edgelist(Z, df)
     return df
   
