@@ -255,9 +255,9 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
                     warnings.warn("Warning: The dimension of the cluster is 0. You may want to reduce cluster_rigidity.", RuntimeWarning)
                     flag = False
             if flag == True:
-                print("- Creating new cluster")
-                clusters.append(current_cluster)
                 index += 1
+                print(f"- Creating new cluster: {index}")
+                clusters.append(current_cluster)
         elif dimension - np.size(current_cluster) < int(dimension * dim_fraction):
             # - If all nodes are different, dimension-np.size(current_cluster)==0 => Create new cluster.
             # - If all nodes are the same, dimension-np.size(current_cluster)==dimension => Expand with nothing.
