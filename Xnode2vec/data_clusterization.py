@@ -244,11 +244,13 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
         dimension = np.size(current_cluster)
         different_nodes_counters = [] # This is used to find the cluster to expand and to decide whether to create a new cluster.
         if len(clusters) != 0:
+            copy_current_cluster = current_cluster # Needs because current cluster GETS FILTERED, so it cant be used in new_nodes_positions.
             for previous_cluster in clusters:
                 # True = already in, False = new node. This is inverted, so True = new node.
-                current_positions = np.invert(np.isin(current_cluster, previous_cluster))
-                different_nodes_counters.append(current_positions.sum())
-                current_cluster = current_cluster[~np.in1d(current_cluster,previous_cluster)] # current_cluster filtering.
+                current_positions = np.invert(np.isin(current_cluster, previous_cluster)) # Needs for filtering the current cluster.
+                new_nodes_positions = np.invert(np.isin(copy_current_cluster, previous_cluster)) # Needs for comparison with the previous clusters.
+                different_nodes_counters.append(new_nodes_positions.sum()) # Number of DIFFERENT nodes compared to each existing cluster,then we take the MIN.
+                current_cluster = current_cluster[~np.in1d(current_cluster,previous_cluster)] # current_cluster filtering (removing existing nodes).
         if dimension == np.size(current_cluster):
             # Creating new cluster if the dimension of cluster remain the same. This means that the nodes in common are none.
             if dimension == 1: # If the current cluster is empty, skip the process. (empty means with only current node)
@@ -263,7 +265,7 @@ def clusters_detection(G, cluster_rigidity=0.7, spacing=5, dim_fraction=0.8, **k
             # - If all nodes are the same, dimension-np.size(current_cluster)==dimension => Expand with nothing.
             # - If some nodes are different, dimension-np.size(current_cluster)>0:
             #       if dimension-np.size(current_cluster)<threshold => There are enough SAME nodes to expand the clusters.
-            ind = np.where(different_nodes_counters == np.min(different_nodes_counters))
+            ind = np.where(different_nodes_counters == np.min(different_nodes_counters)) # Position in different_nodes_counters.
             if ind[0].size != 1: # Don't expand if there are ambiguities on where put the nodes.
                 pass
             else:
