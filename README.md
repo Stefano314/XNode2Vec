@@ -67,11 +67,11 @@ df = xn2v.complete_edgelist(dataset) # Pandas edge list generation
 df = xn2v.generate_edgelist(df) # Networkx edgelist format
 G = nx.Graph()
 G.add_weighted_edges_from(df)
-graph = xn2v.nx_to_Graph(G) # Load the Graph object to avoid multiple network readings
-nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, graph=graph, cluster_rigidity = 0.85, 
+
+nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, cluster_rigidity = 0.9, 
                                                           spacing = 15, dim_fraction = 0.8,
-                                                          picked=100, dim=100, context=5, 
-                                                          Weight=True, walk_length=20)
+                                                          picked=100, dim=20, context=5, Epochs = 5,
+                                                          Weight=True, walk_length=50)
 points_families = []
 points_unlabeled = []
 
@@ -153,6 +153,7 @@ Note
 ----
 - 9/17/2021: I had some issues when installing the fastnode2vec package; in particular, the example given by Louis Abraham gives an error. I noticed that after the installation, the declaration of the file "node2vec.py" wasn't the same as the latest version available on its GitHub (at the moment). My brutal solution was simply to just copy the whole content into the node2vec.py file. This solves the problem.
 - 9/17/2021: Numba requires numpy <= 1.20 in order to work.
+- 6/1/2022: All issues I found seem fixed.
 
 Citing
 ------
