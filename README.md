@@ -68,10 +68,10 @@ df = xn2v.generate_edgelist(df) # Networkx edgelist format
 G = nx.Graph()
 G.add_weighted_edges_from(df)
 
-nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, cluster_rigidity = 0.9, 
-                                                          spacing = 15, dim_fraction = 0.8,
-                                                          picked=100, dim=20, context=5, Epochs = 5,
-                                                          Weight=True, walk_length=50)
+nodes_families, unlabeled_nodes = xn2v.clusters_detection(G, cluster_rigidity = 0.8,
+                                                          spacing = 15, dim_fraction = 0.7,
+                                                          picked=len(G.nodes), dim=20, context=5, Epochs = 5,
+                                                          Weight=True, walk_length=20)
 points_families = []
 points_unlabeled = []
 
@@ -79,10 +79,15 @@ for i in range(0,len(nodes_families)):
     points_families.append(xn2v.recover_points(dataset,G,nodes_families[i]))
 points_unlabeled = xn2v.recover_points(dataset,G,unlabeled_nodes)
 
-plt.scatter(dataset[:,0], dataset[:,1])
+xn2v.summary_clusters(points_families, points_unlabeled)
+
+for cluster in points_families:
+    plt.scatter(cluster[:,0], cluster[:,1])
+
+# plt.scatter(points_unlabeled[:,0], points_unlabeled[:,1]) # if any
 plt.xlabel('x')
 plt.ylabel('y')
-plt.title('Generic Dataset', fontweight='bold')
+plt.title('Clustered Dataset', fontweight='bold')
 plt.show()
 ```
 Now the list ```points_families``` contains the four clusters -- clearly taking in account possible statistical errors. The results are however surprisingly good in many situations.
