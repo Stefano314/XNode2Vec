@@ -154,6 +154,13 @@ Functions Description
 
 - ```draw_community()```: Draws a networkx plot highlighting some specific nodes in that network. The last node is higlighted in red, the remaining nodes in "nodes_result" are in blue, while the rest of the network is green.
 
+Potential Developments
+----------------------
+- Possibility to add a **dynamical** cluster threshold by using the gradient (see image below). I've tried this, but the classification gets a bit messy on the border, so it should be properly optimized.
+
+![sim_plot](https://user-images.githubusercontent.com/79590448/171503840-0b824616-f7e1-4df5-ba4c-76e32dff17cb.png)
+
+
 Note
 ----
 - 9/17/2021: I had some issues when installing the fastnode2vec package; in particular, the example given by Louis Abraham gives an error. I noticed that after the installation, the declaration of the file "node2vec.py" wasn't the same as the latest version available on its GitHub (at the moment). My brutal solution was simply to just copy the whole content into the node2vec.py file. This solves the problem.
