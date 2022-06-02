@@ -8,6 +8,21 @@ from tqdm import tqdm
 
 from .data_management import nx_to_Graph
 
+# cache global variable
+_cache = dict()
+
+
+def clear_cache():
+    """
+    Description
+    -----------
+    Simple warp of dict.clear() function.
+
+    """
+    print("\nClearing cache ..\n")
+    print(f'removing: {list(_cache.keys())}')
+    
+    _cache.clear()
 
 def low_limit_network(G, delta : float, remove=False) -> nx.Graph:
     """
@@ -177,8 +192,11 @@ def similar_nodes(G, node=1, picked=10, Epochs=30, Weight=True, model_name=None,
     """
     if graph is None:
 
-        G_fn2v = nx_to_Graph(G, Weight)
-        n2v = Node2Vec(G_fn2v, **kwargs)
+        if 'graph' not in _cache:
+            print("\nCaching trained graph ..\n")
+            _cache['graph'] = nx_to_Graph(G, Weight)
+
+        n2v = Node2Vec(_cache['graph'], **kwargs)
 
     else:
 
@@ -186,7 +204,7 @@ def similar_nodes(G, node=1, picked=10, Epochs=30, Weight=True, model_name=None,
 
     n2v.train(epochs = Epochs, progress_bar = False)
 
-    if model_name != None:
+    if model_name is not None:
         n2v.save(model_name)
 
     nodes = n2v.wv.most_similar(node, topn = picked)
