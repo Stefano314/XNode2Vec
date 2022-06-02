@@ -24,6 +24,7 @@ def clear_cache():
     
     _cache.clear()
 
+
 def low_limit_network(G, delta : float, remove=False) -> nx.Graph:
     """
     Description

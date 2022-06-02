@@ -17,6 +17,6 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     packages=["Xnode2vec"],
-    install_requires=["fastnode2vec","scipy","scikit-spatial","pandas"],
+    install_requires=["fastnode2vec", "scipy", "scikit-spatial", "pandas"],
     python_requires=">=3.6",
 )
