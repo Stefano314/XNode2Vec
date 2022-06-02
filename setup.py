@@ -18,5 +18,5 @@ setuptools.setup(
     ],
     packages=["Xnode2vec"],
     install_requires=["fastnode2vec", "scipy", "scikit-spatial", "pandas"],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
 )
